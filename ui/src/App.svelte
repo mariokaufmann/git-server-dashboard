@@ -10,7 +10,7 @@
     <p>Loading...</p>
   {:then dashboardData}
     {#each dashboardData.repositories as repository}
-      <RepositoryCard repositoryBranchData={repository}/>
+      <RepositoryCard repositoryBranchData={repository} />
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>
@@ -19,6 +19,6 @@
 
 <style>
   main {
-      margin: 50px 50px 0 50px;
+    margin: 50px 50px 0 50px;
   }
 </style>
