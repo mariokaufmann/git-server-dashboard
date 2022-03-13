@@ -177,12 +177,20 @@ pub async fn load_repository_data(
                         last_activity_date: pr.details_response.updated_at.to_owned(),
                     })
                     .collect();
-                PullRequestTargetBranch {
+                let target_branch_details = branch_details
+                    .iter()
+                    .find(|branch| branch.details_response.name.eq(*name))
+                    .with_context(|| {
+                        format!("Could not find branch details for branch {}.", name)
+                    })?;
+                Ok(PullRequestTargetBranch {
                     branch_name: name.to_string(),
+                    pipeline_status: map_pipeline_status(&target_branch_details.pipeline_response),
                     pull_requests,
-                }
+                })
             })
-            .collect();
+            .collect::<anyhow::Result<Vec<PullRequestTargetBranch>>>()
+            .context("Could not gather pull request details.")?;
 
     let standalone_branches = branch_details
         .iter()

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { RepositoryBranchData } from "../types";
+  import GitBranch from "./GitBranch.svelte";
 
   export let repositoryBranchData: RepositoryBranchData;
 </script>
@@ -8,7 +9,10 @@
   <h2>{repositoryBranchData.repository_name}</h2>
   <div class="scrollable">
     {#each repositoryBranchData.pull_request_target_branches as pr_target_branch}
-      <p>{pr_target_branch.branch_name}</p>
+      <GitBranch
+        name={pr_target_branch.branch_name}
+        pipelineStatus={pr_target_branch.pipeline_status}
+      />
       {#each pr_target_branch.pull_requests as pull_request}
         <p>{pull_request.branch_name}</p>
         <img

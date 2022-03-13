@@ -10,6 +10,7 @@ export interface RepositoryBranchData {
 
 export interface PullRequestTargetBranch {
   branch_name: string;
+  pipeline_status: PipelineStatus;
   pull_requests: PullRequest[];
 }
 
