@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: '16'
       - name: Lint UI
+        if: ${{ matrix.label == 'ubuntu-latest' }}
         run: |
           npm ci --no-optional
           npm run lint
