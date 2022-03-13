@@ -1,0 +1,17 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+  --color-fiery-rose: #ff5964;
+  --color-screaming-green: #6bf178;
+  --color-minion-yellow: #ffe74c;
+  --color-blue-jeans: #35a7ff;
+
+  --color-text: #202020;
+}
+
+html {
+  background-color: #002e73;
+
+  color: var(--color-text);
+}

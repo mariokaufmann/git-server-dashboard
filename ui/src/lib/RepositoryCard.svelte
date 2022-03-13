@@ -1,0 +1,41 @@
+<script lang="ts">
+  import type { RepositoryBranchData } from "../types";
+
+  export let repositoryBranchData: RepositoryBranchData;
+</script>
+
+<div class="card">
+  <h2>{repositoryBranchData.repository_name}</h2>
+  <div class="scrollable">
+  {#each repositoryBranchData.pull_request_target_branches as pr_target_branch}
+    <p>{pr_target_branch.branch_name}</p>
+    {#each pr_target_branch.pull_requests as pull_request}
+      <p>{pull_request.branch_name}</p>
+      <img src={pull_request.user_profile_image} alt="Pull request user profile avatar"/>
+      <i class="fa-solid fa-code-branch"></i>
+    {/each}
+  {/each}
+  </div>
+</div>
+
+<style>
+    .card {
+        background: radial-gradient(50% 50% at 50% 50%, #E8EAEF 0%, #B5BDD0 100%);
+        border-radius: 5px;
+        padding: 1rem;
+    }
+
+    .scrollable {
+        height: 10rem;
+        overflow-y: auto;
+    }
+
+    h2 {
+        margin: 0 0 1rem 0;
+    }
+
+    img {
+        width: 30px;
+        border-radius: 50%;
+    }
+</style>
