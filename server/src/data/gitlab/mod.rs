@@ -31,8 +31,8 @@ impl GitlabClient {
     }
 
     pub async fn request<T>(&self, url: &str) -> anyhow::Result<T>
-    where
-        T: serde::de::DeserializeOwned,
+        where
+            T: serde::de::DeserializeOwned,
     {
         let full_url = format!("{}/api/v4/projects/{}", self.gitlab_url, url);
         let response = self
@@ -67,7 +67,7 @@ pub async fn load_dashboard_data(
 ) -> anyhow::Result<DashboardData> {
     let mut repositories = Vec::new();
     for project in projects {
-        let repository_data = load_repository_data(client, &project)
+        let repository_data = load_repository_data(client, project)
             .await
             .with_context(|| format!("Could not load data for repository {}.", project))?;
         repositories.push(repository_data);
@@ -151,7 +151,7 @@ pub async fn load_repository_data(
                 )
             })?;
         let single_branch_details = BranchDetails {
-            pipeline_response: pipelines_response.into_iter().nth(0),
+            pipeline_response: pipelines_response.into_iter().next(),
             details_response: branch,
         };
         branch_details.push(single_branch_details);
@@ -187,18 +187,17 @@ pub async fn load_repository_data(
     let standalone_branches = branch_details
         .iter()
         .filter(|branch| {
-            merge_request_details
+            !merge_request_details
                 .iter()
-                .find(|mr| {
+                .any(|mr| {
                     mr.details_response
                         .source_branch
                         .eq(&branch.details_response.name)
                         || mr
-                            .details_response
-                            .target_branch
-                            .eq(&branch.details_response.name)
+                        .details_response
+                        .target_branch
+                        .eq(&branch.details_response.name)
                 })
-                .is_none()
         })
         .map(|branch| StandaloneBranch {
             branch_name: branch.details_response.name.to_string(),
