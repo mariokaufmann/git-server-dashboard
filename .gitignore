@@ -1,4 +1,4 @@
 target/
 **/.idea
 **/*.iml
-package/*.zip
+gitlab-branch-dashboard*.zip

@@ -57,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.artifact }}
-          path: package/${{ matrix.artifact }}.zip
+          path: ${{ matrix.artifact }}.zip
   release:
     runs-on: [ ubuntu-latest ]
     if: startsWith(github.ref, 'refs/tags/v')
