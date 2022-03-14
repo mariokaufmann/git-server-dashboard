@@ -9,16 +9,21 @@
 <div class="branch">
   <i class="fa-solid fa-code-branch" />
   <PipelineStatusIcon {pipelineStatus} />
-  <span>{name}</span>
+  <span class="branch-name">{name}</span>
 </div>
 
 <style>
   .branch {
     display: flex;
     align-items: center;
+    padding: 0.25rem 0;
   }
 
-  .branch i {
+  .branch-name {
+    margin-left: 1rem;
+  }
+
+  .branch > :global(*:not(:first-child)) {
     margin-left: 0.5rem;
   }
 </style>

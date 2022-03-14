@@ -14,4 +14,5 @@ html {
   background-color: #002e73;
 
   color: var(--color-text);
+  font-size: 18px;
 }
