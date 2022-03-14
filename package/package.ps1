@@ -9,5 +9,5 @@ if (Test-Path .\gitlab-branch-dashboard-windows.zip) {
 
 New-Item -ItemType Directory -Path .\target | Out-Null
 Copy-Item .\server\target\release\gitlab-branch-dashboard.exe target\
-Copy-Item .\ui\dist target\ -Recurse
+Copy-Item .\ui\dist target\static -Recurse
 Compress-Archive -Path .\target\* -DestinationPath .\gitlab-branch-dashboard-windows.zip
