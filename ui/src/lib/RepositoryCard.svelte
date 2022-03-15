@@ -27,10 +27,11 @@
     border-radius: 5px;
     padding: 1rem;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    width: 500px;
   }
 
   .scrollable {
-    height: 10rem;
+    height: 15rem;
     overflow-y: auto;
   }
 

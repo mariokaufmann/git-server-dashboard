@@ -8,21 +8,23 @@
 
 <div>
   <div class="pr">
-    <i class="fa-solid fa-code-pull-request" />
+    <i class="fa-solid fa-code-pull-request" title="Pull Request"/>
     <PipelineStatusIcon pipelineStatus={pullRequest.pipeline_status} />
     <span>{pullRequest.branch_name}</span>
   </div>
   <div class="pr-metadata">
+
+    <i class="fa-solid fa-comment small-icon fa-xs" title="Number of comments"/>
+    <span>{pullRequest.comment_count}</span>
+    {#if pullRequest.approved}
+      <i class="fa-solid fa-thumbs-up fa-xs" />
+    {/if}
     <img
       src={pullRequest.user_profile_image}
       alt="Pull request user profile avatar"
     />
-    <i class="fa-solid fa-comment" />
-    <span>{pullRequest.comment_count}</span>
-    {#if pullRequest.approved}
-      <i class="fa-solid fa-thumbs-up" />
-    {/if}
-    <span class="date">{dayjs(pullRequest.last_activity_date).fromNow()}</span>
+    <span class="detail">Branch author</span>
+    <span class="detail" title="Last updated">{dayjs(pullRequest.last_activity_date).fromNow()}</span>
   </div>
 </div>
 
@@ -53,7 +55,7 @@
     border: solid 2px white;
   }
 
-  .date {
+  .detail {
     display: inline-block;
     font-size: 0.8rem;
   }

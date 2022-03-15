@@ -7,7 +7,7 @@
 </script>
 
 <div class="branch">
-  <i class="fa-solid fa-code-branch" />
+  <i class="fa-solid fa-code-branch" title="Branch"/>
   <PipelineStatusIcon {pipelineStatus} />
   <span class="branch-name">{name}</span>
 </div>

@@ -27,6 +27,19 @@
     }
   };
 
+  const mapToTitle = (status: PipelineStatus): string => {
+    switch (status) {
+      case "Successful":
+        return "Pipeline successful";
+      case "Failed":
+        return "Pipeline failed";
+      case "Running":
+        return "Pipeline running";
+      case "None":
+        return "No pipeline found";
+    }
+  };
+
   export let pipelineStatus: PipelineStatus;
 </script>
 
@@ -34,6 +47,7 @@
   class="fa-solid fa-{mapToIcon(pipelineStatus)} {mapToColorClass(
     pipelineStatus
   )}"
+  title={mapToTitle(pipelineStatus)}
 />
 
 <style>
@@ -45,8 +59,7 @@
   }
 
   .icon-successful {
-    color: var(--color-screaming-green);
-    background-color: black;
+    color: var(--color-green);
   }
 
   .icon-failed {
