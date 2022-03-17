@@ -44,6 +44,7 @@ pub struct MergeRequestApprovalsResponse {
 
 #[derive(Deserialize)]
 pub struct GitlabUserResponse {
+    pub name: String,
     pub avatar_url: String,
 }
 
@@ -55,4 +56,20 @@ pub enum GitlabPipelineStatus {
     Running,
     #[serde(rename = "failed")]
     Failed,
+    #[serde(rename = "created")]
+    Created,
+    #[serde(rename = "waiting_for_resource")]
+    WaitingForResource,
+    #[serde(rename = "preparing")]
+    Preparing,
+    #[serde(rename = "pending")]
+    Pending,
+    #[serde(rename = "canceled")]
+    Canceled,
+    #[serde(rename = "skipped")]
+    Skipped,
+    #[serde(rename = "manual")]
+    Manual,
+    #[serde(rename = "scheduled")]
+    Scheduled,
 }

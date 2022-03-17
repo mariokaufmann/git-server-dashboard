@@ -22,6 +22,7 @@ pub struct PullRequestTargetBranch {
 #[derive(Serialize)]
 pub struct PullRequest {
     pub branch_name: String,
+    pub user_name: String,
     pub user_profile_image: String,
     pub comment_count: u16,
     pub last_activity_date: String,
@@ -40,5 +41,7 @@ pub enum PipelineStatus {
     Running,
     Successful,
     Failed,
+    Queued,
+    Canceled,
     None,
 }

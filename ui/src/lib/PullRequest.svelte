@@ -25,7 +25,7 @@
       src={pullRequest.user_profile_image}
       alt="Pull request user profile avatar"
     />
-    <span class="detail">Branch author</span>
+    <span class="detail">{pullRequest.user_name}</span>
     <span class="detail" title="Last updated"
       >{dayjs(pullRequest.last_activity_date).fromNow()}</span
     >

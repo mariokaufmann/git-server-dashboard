@@ -170,6 +170,7 @@ pub async fn load_repository_data(
                     .filter(|pr| pr.details_response.target_branch.eq(*name))
                     .map(|pr| PullRequest {
                         branch_name: pr.details_response.source_branch.to_owned(),
+                        user_name: pr.details_response.author.name.to_owned(),
                         pipeline_status: map_pipeline_status(&pr.details_response.pipeline),
                         comment_count: pr.details_response.user_notes_count,
                         approved: pr.approvals_response.approved,
@@ -229,6 +230,14 @@ fn map_pipeline_status(response: &Option<PipelineResponse>) -> PipelineStatus {
             GitlabPipelineStatus::Running => PipelineStatus::Running,
             GitlabPipelineStatus::Success => PipelineStatus::Successful,
             GitlabPipelineStatus::Failed => PipelineStatus::Failed,
+            GitlabPipelineStatus::Created => PipelineStatus::Queued,
+            GitlabPipelineStatus::WaitingForResource => PipelineStatus::Queued,
+            GitlabPipelineStatus::Preparing => PipelineStatus::Queued,
+            GitlabPipelineStatus::Pending => PipelineStatus::Queued,
+            GitlabPipelineStatus::Canceled => PipelineStatus::Canceled,
+            GitlabPipelineStatus::Skipped => PipelineStatus::None,
+            GitlabPipelineStatus::Manual => PipelineStatus::None,
+            GitlabPipelineStatus::Scheduled => PipelineStatus::Queued,
         },
         None => PipelineStatus::None,
     }
