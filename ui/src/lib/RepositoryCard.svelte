@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { RepositoryBranchData } from "../types";
+  import PullRequestTargetBranch from "./PullRequestTargetBranch.svelte";
+  import GitBranch from "./GitBranch.svelte";
 
   export let repositoryBranchData: RepositoryBranchData;
 </script>
@@ -8,37 +10,32 @@
   <h2>{repositoryBranchData.repository_name}</h2>
   <div class="scrollable">
     {#each repositoryBranchData.pull_request_target_branches as pr_target_branch}
-      <p>{pr_target_branch.branch_name}</p>
-      {#each pr_target_branch.pull_requests as pull_request}
-        <p>{pull_request.branch_name}</p>
-        <img
-          src={pull_request.user_profile_image}
-          alt="Pull request user profile avatar"
-        />
-        <i class="fa-solid fa-code-branch" />
-      {/each}
+      <PullRequestTargetBranch {pr_target_branch} />
+    {/each}
+    {#each repositoryBranchData.standalone_branches as standalone_branch}
+      <GitBranch
+        pipelineStatus={standalone_branch.pipeline_status}
+        name={standalone_branch.branch_name}
+      />
     {/each}
   </div>
 </div>
 
 <style>
   .card {
-    background: radial-gradient(50% 50% at 50% 50%, #e8eaef 0%, #b5bdd0 100%);
+    background: radial-gradient(50% 50% at 50% 50%, #e8eaef 0%, #e5e5fc 100%);
     border-radius: 5px;
     padding: 1rem;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    width: 500px;
   }
 
   .scrollable {
-    height: 10rem;
+    height: 15rem;
     overflow-y: auto;
   }
 
   h2 {
-    margin: 0 0 1rem 0;
-  }
-
-  img {
-    width: 30px;
-    border-radius: 50%;
+    margin: 0 0 0.5rem 0;
   }
 </style>

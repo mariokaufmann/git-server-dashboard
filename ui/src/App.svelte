@@ -20,5 +20,9 @@
 <style>
   main {
     margin: 50px 50px 0 50px;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+    row-gap: 1rem;
   }
 </style>

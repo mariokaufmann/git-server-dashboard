@@ -15,12 +15,14 @@ pub struct RepositoryBranchData {
 #[derive(Serialize)]
 pub struct PullRequestTargetBranch {
     pub branch_name: String,
+    pub pipeline_status: PipelineStatus,
     pub pull_requests: Vec<PullRequest>,
 }
 
 #[derive(Serialize)]
 pub struct PullRequest {
     pub branch_name: String,
+    pub user_name: String,
     pub user_profile_image: String,
     pub comment_count: u16,
     pub last_activity_date: String,
@@ -39,5 +41,7 @@ pub enum PipelineStatus {
     Running,
     Successful,
     Failed,
+    Queued,
+    Canceled,
     None,
 }

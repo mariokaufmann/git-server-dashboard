@@ -10,11 +10,13 @@ export interface RepositoryBranchData {
 
 export interface PullRequestTargetBranch {
   branch_name: string;
+  pipeline_status: PipelineStatus;
   pull_requests: PullRequest[];
 }
 
 export interface PullRequest {
   branch_name: string;
+  user_name: string;
   user_profile_image: string;
   comment_count: number;
   last_activity_date: string;
@@ -27,4 +29,10 @@ export interface StandaloneBranch {
   pipeline_status: PipelineStatus;
 }
 
-export type PipelineStatus = "Running" | "Successful" | "Failed" | "None";
+export type PipelineStatus =
+  | "Running"
+  | "Successful"
+  | "Failed"
+  | "None"
+  | "Canceled"
+  | "Queued";

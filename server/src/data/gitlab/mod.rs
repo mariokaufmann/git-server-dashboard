@@ -67,7 +67,7 @@ pub async fn load_dashboard_data(
 ) -> anyhow::Result<DashboardData> {
     let mut repositories = Vec::new();
     for project in projects {
-        let repository_data = load_repository_data(client, &project)
+        let repository_data = load_repository_data(client, project)
             .await
             .with_context(|| format!("Could not load data for repository {}.", project))?;
         repositories.push(repository_data);
@@ -151,7 +151,7 @@ pub async fn load_repository_data(
                 )
             })?;
         let single_branch_details = BranchDetails {
-            pipeline_response: pipelines_response.into_iter().nth(0),
+            pipeline_response: pipelines_response.into_iter().next(),
             details_response: branch,
         };
         branch_details.push(single_branch_details);
@@ -170,6 +170,7 @@ pub async fn load_repository_data(
                     .filter(|pr| pr.details_response.target_branch.eq(*name))
                     .map(|pr| PullRequest {
                         branch_name: pr.details_response.source_branch.to_owned(),
+                        user_name: pr.details_response.author.name.to_owned(),
                         pipeline_status: map_pipeline_status(&pr.details_response.pipeline),
                         comment_count: pr.details_response.user_notes_count,
                         approved: pr.approvals_response.approved,
@@ -177,28 +178,33 @@ pub async fn load_repository_data(
                         last_activity_date: pr.details_response.updated_at.to_owned(),
                     })
                     .collect();
-                PullRequestTargetBranch {
+                let target_branch_details = branch_details
+                    .iter()
+                    .find(|branch| branch.details_response.name.eq(*name))
+                    .with_context(|| {
+                        format!("Could not find branch details for branch {}.", name)
+                    })?;
+                Ok(PullRequestTargetBranch {
                     branch_name: name.to_string(),
+                    pipeline_status: map_pipeline_status(&target_branch_details.pipeline_response),
                     pull_requests,
-                }
+                })
             })
-            .collect();
+            .collect::<anyhow::Result<Vec<PullRequestTargetBranch>>>()
+            .context("Could not gather pull request details.")?;
 
     let standalone_branches = branch_details
         .iter()
         .filter(|branch| {
-            merge_request_details
-                .iter()
-                .find(|mr| {
-                    mr.details_response
-                        .source_branch
+            !merge_request_details.iter().any(|mr| {
+                mr.details_response
+                    .source_branch
+                    .eq(&branch.details_response.name)
+                    || mr
+                        .details_response
+                        .target_branch
                         .eq(&branch.details_response.name)
-                        || mr
-                            .details_response
-                            .target_branch
-                            .eq(&branch.details_response.name)
-                })
-                .is_none()
+            })
         })
         .map(|branch| StandaloneBranch {
             branch_name: branch.details_response.name.to_string(),
@@ -224,6 +230,14 @@ fn map_pipeline_status(response: &Option<PipelineResponse>) -> PipelineStatus {
             GitlabPipelineStatus::Running => PipelineStatus::Running,
             GitlabPipelineStatus::Success => PipelineStatus::Successful,
             GitlabPipelineStatus::Failed => PipelineStatus::Failed,
+            GitlabPipelineStatus::Created => PipelineStatus::Queued,
+            GitlabPipelineStatus::WaitingForResource => PipelineStatus::Queued,
+            GitlabPipelineStatus::Preparing => PipelineStatus::Queued,
+            GitlabPipelineStatus::Pending => PipelineStatus::Queued,
+            GitlabPipelineStatus::Canceled => PipelineStatus::Canceled,
+            GitlabPipelineStatus::Skipped => PipelineStatus::None,
+            GitlabPipelineStatus::Manual => PipelineStatus::None,
+            GitlabPipelineStatus::Scheduled => PipelineStatus::Queued,
         },
         None => PipelineStatus::None,
     }
