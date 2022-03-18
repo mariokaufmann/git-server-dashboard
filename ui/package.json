@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npx cpy dist/** ../server/static/",
+    "build": "vite build && npx cpy . ../../server/static --cwd=dist",
     "preview": "vite preview",
     "format": "npx prettier --write .",
     "lint": "npx prettier --check . && npx eslint --ext .svelte --ext .ts --ext .js . && npm run check",
