@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use anyhow::{anyhow, Context};
 use axum::http;
+use chrono::Utc;
 use reqwest::Method;
 
 use crate::data::gitlab::model::{
@@ -72,7 +73,12 @@ pub async fn load_dashboard_data(
             .with_context(|| format!("Could not load data for repository {}.", project))?;
         repositories.push(repository_data);
     }
-    Ok(DashboardData { repositories })
+    let last_updated_date = Utc::now();
+    let formatted_last_updated_date = format!("{}", last_updated_date.format("%+"));
+    Ok(DashboardData {
+        last_updated_date: Some(formatted_last_updated_date),
+        repositories,
+    })
 }
 
 pub async fn load_repository_data(

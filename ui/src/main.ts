@@ -14,6 +14,6 @@ const app = new App({
 
 fetch("/api/version")
   .then((response) => response.text())
-  .then(console.log);
+  .then((serverVersion) => console.log(`Server version: ${serverVersion}.`));
 
 export default app;

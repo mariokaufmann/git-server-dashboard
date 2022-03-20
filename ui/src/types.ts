@@ -1,4 +1,5 @@
 export interface DashboardData {
+  last_updated_date?: string;
   repositories: RepositoryBranchData[];
 }
 
