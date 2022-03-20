@@ -22,7 +22,7 @@ pub fn init_logger(is_verbose: bool) {
 
 fn level_filter(is_verbose: bool) -> LevelFilter {
     if is_verbose {
-        LevelFilter::Trace
+        LevelFilter::Debug
     } else {
         LevelFilter::Info
     }

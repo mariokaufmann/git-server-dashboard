@@ -1,8 +1,13 @@
 use std::net::SocketAddr;
+use std::sync::Arc;
+use std::time::Duration;
 
-use crate::config::Configuration;
 use anyhow::Context;
 use log::{error, info};
+
+use crate::config::Configuration;
+use crate::data::cache::DashboardDataCache;
+use crate::data::loader::DataLoader;
 
 mod config;
 mod data;
@@ -11,19 +16,26 @@ mod logger;
 
 const DASHBOARD_VERSION: &str = env!("CARGO_PKG_VERSION");
 
+type LockableCache = Arc<tokio::sync::Mutex<DashboardDataCache>>;
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let configuration = config::load_configuration_from_environment()
         .context("Could not load configuration from environment")?;
     logger::init_logger(configuration.verbose);
-    start_with_config(configuration).await?;
+
+    let cache = Arc::new(tokio::sync::Mutex::new(DashboardDataCache::new()));
+    let data_loader = DataLoader::new(&configuration);
+    tokio::spawn(keep_loading_data(cache.clone(), data_loader));
+
+    start_with_config(cache).await?;
 
     Ok(())
 }
 
-async fn start_with_config(configuration: Configuration) -> anyhow::Result<()> {
+async fn start_with_config(cache: LockableCache) -> anyhow::Result<()> {
     info!("Starting gitlab branch dashboard server...");
-    match endpoint::routes::get_router(&configuration) {
+    match endpoint::routes::get_router(cache) {
         Ok(router) => {
             let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
             if let Err(err) = axum_server::bind(addr)
@@ -36,4 +48,28 @@ async fn start_with_config(configuration: Configuration) -> anyhow::Result<()> {
         Err(err) => error!("Could not configure server routes: {}", err),
     }
     Ok(())
+}
+
+async fn keep_loading_data(cache: LockableCache, data_loader: DataLoader) {
+    loop {
+        let locked_cache = cache.lock().await;
+        let should_reload = locked_cache.should_reload();
+        drop(locked_cache);
+        if should_reload {
+            match data_loader.load_data().await {
+                Ok(data) => {
+                    let mut locked_cache = cache.lock().await;
+                    locked_cache.cache_data(data);
+                    drop(locked_cache);
+                    tokio::time::sleep(Duration::from_secs(3)).await;
+                }
+                Err(err) => {
+                    error!("Could not reload dashboard data: {:#}", err);
+                    tokio::time::sleep(Duration::from_secs(30)).await;
+                }
+            }
+        } else {
+            tokio::time::sleep(Duration::from_secs(3)).await;
+        }
+    }
 }
