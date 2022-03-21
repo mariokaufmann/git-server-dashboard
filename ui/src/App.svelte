@@ -2,14 +2,21 @@
   import { getDashboardData } from "./api/dashboardData";
   import RepositoryCard from "./lib/RepositoryCard.svelte";
   import dayjs from "dayjs";
-  import type { DashboardData } from "./types";
+  import type { DashboardData, RepositoryBranchData } from "./types";
   import { onDestroy } from "svelte";
 
   let dashboardData: DashboardData;
   let timeout = null;
 
   function reloadData() {
-    getDashboardData().then((data) => (dashboardData = data));
+    getDashboardData().then((data) => {
+      dashboardData = {
+        last_updated_date: data.last_updated_date,
+        repositories: data.repositories.sort(
+          (rep1, rep2) => estimateLineCount(rep2) - estimateLineCount(rep1)
+        ),
+      };
+    });
     timeout = setTimeout(reloadData, 10_000);
   }
 
@@ -20,6 +27,28 @@
     } else if (visibilityState === "hidden" && timeout) {
       clearTimeout(timeout);
       timeout = null;
+    }
+  }
+
+  function estimateLineCount(repository: RepositoryBranchData) {
+    return (
+      repository.standalone_branches.length +
+      repository.pull_request_target_branches.length +
+      repository.pull_request_target_branches.reduce(
+        (previous, current) => previous + 2 * current.pull_requests.length,
+        0
+      )
+    );
+  }
+
+  function mapTileSizeClass(repository: RepositoryBranchData) {
+    const approximateLineCount = estimateLineCount(repository);
+    if (approximateLineCount > 6) {
+      return "tile-large";
+    } else if (approximateLineCount > 2) {
+      return "tile-medium";
+    } else {
+      return "tile-small";
     }
   }
 
@@ -35,12 +64,7 @@
 </script>
 
 {#if dashboardData}
-  <main>
-    {#each dashboardData.repositories as repository}
-      <RepositoryCard repositoryBranchData={repository} />
-    {/each}
-  </main>
-  <div class="footer">
+  <div class="header">
     {#if dashboardData.last_updated_date}
       <p>
         Last updated: {dayjs(dashboardData.last_updated_date).format(
@@ -51,28 +75,45 @@
       <p>Data not loaded yet</p>
     {/if}
   </div>
+  <main>
+    {#each dashboardData.repositories as repository}
+      <div class={mapTileSizeClass(repository)}>
+        <RepositoryCard repositoryBranchData={repository} />
+      </div>
+    {/each}
+  </main>
 {/if}
 
 <style>
   main {
-    margin: 50px 50px 0 50px;
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 1rem;
-    row-gap: 1rem;
+    margin: 0 1rem;
+    display: grid;
+    grid-gap: 1rem;
     color: var(--color-text);
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-auto-flow: dense;
   }
 
-  .footer {
-    position: absolute;
-    bottom: 0;
+  .tile-large {
+    grid-row: span 3;
+  }
+
+  .tile-medium {
+    grid-row: span 2;
+  }
+
+  .tile-small {
+    grid-row: span 1;
+  }
+
+  .header {
     display: flex;
-    padding: 1rem;
+    padding: 0.5rem;
     justify-content: flex-end;
     width: 100%;
   }
 
-  .footer p {
+  .header p {
     margin: 0;
     font-size: 0.8em;
   }

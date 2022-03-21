@@ -9,6 +9,10 @@
         return "circle-xmark";
       case "Running":
         return "circle-stop";
+      case "Canceled":
+        return "circle-trash";
+      case "Queued":
+        return "circle-pause";
       case "None":
         return "circle-question";
     }
@@ -22,8 +26,12 @@
         return "icon-failed";
       case "Running":
         return "icon-running";
+      case "Canceled":
+        return "icon-failed";
+      case "Queued":
+        return "icon-default";
       case "None":
-        return "icon-none";
+        return "icon-default";
     }
   };
 
@@ -35,6 +43,10 @@
         return "Pipeline failed";
       case "Running":
         return "Pipeline running";
+      case "Canceled":
+        return "Pipeline canceled";
+      case "Queued":
+        return "Pipeline queued";
       case "None":
         return "No pipeline found";
     }
@@ -70,7 +82,7 @@
     color: var(--color-blue-jeans);
   }
 
-  .icon-none {
+  .icon-default {
     color: var(--color-text);
   }
 </style>
