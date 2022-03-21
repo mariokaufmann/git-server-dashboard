@@ -29,6 +29,7 @@ pub struct PullRequest {
     pub last_activity_date: String,
     pub approved: bool,
     pub pipeline_status: PipelineStatus,
+    pub link_url: String,
 }
 
 #[derive(Serialize, Clone)]

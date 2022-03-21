@@ -8,9 +8,15 @@
 
 <div>
   <div class="pr">
-    <i class="fa-solid fa-code-pull-request" title="Pull Request" />
+    <a href={pullRequest.link_url} target="_blank">
+      <i class="fa-solid fa-code-pull-request" title="Pull Request" /></a
+    >
     <PipelineStatusIcon pipelineStatus={pullRequest.pipeline_status} />
-    <span>{pullRequest.branch_name}</span>
+    <span
+      ><a href={pullRequest.link_url} target="_blank"
+        >{pullRequest.branch_name}</a
+      ></span
+    >
   </div>
   <div class="pr-metadata">
     <i

@@ -23,6 +23,7 @@ export interface PullRequest {
   last_activity_date: string;
   approved: boolean;
   pipeline_status: PipelineStatus;
+  link_url: string;
 }
 
 export interface StandaloneBranch {

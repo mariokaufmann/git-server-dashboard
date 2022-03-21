@@ -30,6 +30,7 @@ pub struct SingleMergeRequestResponse {
     pub has_conflicts: bool,
     pub blocking_discussions_resolved: bool,
     pub pipeline: Option<PipelineResponse>,
+    pub web_url: String,
 }
 
 #[derive(Deserialize)]
