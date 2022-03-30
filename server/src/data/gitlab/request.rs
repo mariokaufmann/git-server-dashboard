@@ -202,7 +202,10 @@ fn map_repository_data(
                 Ok(PullRequestTargetBranch {
                     branch_name: name.to_string(),
                     pipeline_status: map_pipeline_status(&target_branch_details.pipeline_response),
-                    pipeline_url: target_branch_details.job_response.as_ref().map(|job| job.web_url.to_owned()),
+                    pipeline_url: target_branch_details
+                        .job_response
+                        .as_ref()
+                        .map(|job| job.web_url.to_owned()),
                     pull_requests,
                 })
             })
