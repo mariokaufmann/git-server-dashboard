@@ -3,8 +3,9 @@ use std::collections::HashSet;
 use anyhow::Context;
 
 use crate::data::gitlab::model::{
-    BranchDetails, BranchResponse, GitlabPipelineStatus, MergeRequestApprovalsResponse,
-    MergeRequestDetails, MergeRequestResponse, PipelineResponse, SingleMergeRequestResponse,
+    BranchDetails, BranchResponse, GitlabPipelineStatus, JobResponse,
+    MergeRequestApprovalsResponse, MergeRequestDetails, MergeRequestResponse, PipelineResponse,
+    SingleMergeRequestResponse,
 };
 use crate::data::gitlab::GitlabClient;
 use crate::data::model::{
@@ -72,9 +73,18 @@ async fn get_merge_requests(
                 )
             })?;
 
+        let latest_pipeline_job = match &single_merge_request_response.pipeline {
+            Some(pipeline) => Some(
+                get_latest_pipeline_job(client, encoded_project_id, project_id, pipeline.id)
+                    .await?,
+            ),
+            None => None,
+        };
+
         let merge_request_detail = MergeRequestDetails {
             details_response: single_merge_request_response,
             approvals_response: merge_request_approvals,
+            job_response: latest_pipeline_job,
         };
 
         merge_request_details.push(merge_request_detail);
@@ -108,14 +118,51 @@ async fn get_branches(
                     project_id, branch.name,
                 )
             })?;
+        let pipeline_response = pipelines_response.into_iter().next();
+        let job_response = match &pipeline_response {
+            Some(pipeline) => Some(
+                get_latest_pipeline_job(client, encoded_project_id, project_id, pipeline.id)
+                    .await?,
+            ),
+            None => None,
+        };
+
         let single_branch_details = BranchDetails {
-            pipeline_response: pipelines_response.into_iter().next(),
+            pipeline_response,
             details_response: branch,
+            job_response,
         };
         branch_details.push(single_branch_details);
     }
 
     Ok(branch_details)
+}
+
+async fn get_latest_pipeline_job(
+    client: &GitlabClient,
+    encoded_project_id: &str,
+    project_id: &str,
+    pipeline_id: u32,
+) -> anyhow::Result<JobResponse> {
+    let jobs: Vec<JobResponse> = client
+        .request(&format!(
+            "{}/pipelines/{}/jobs",
+            encoded_project_id, pipeline_id
+        ))
+        .await
+        .with_context(|| {
+            format!(
+                "Could not load jobs for project {} and pipeline {}.",
+                project_id, pipeline_id
+            )
+        })?;
+    let latest_job = jobs.into_iter().next().with_context(|| {
+        format!(
+            "Did not find any jobs for project {} and pipeline {}.",
+            project_id, pipeline_id
+        )
+    })?;
+    Ok(latest_job)
 }
 
 fn map_repository_data(
@@ -138,6 +185,7 @@ fn map_repository_data(
                         branch_name: pr.details_response.source_branch.to_owned(),
                         user_name: pr.details_response.author.name.to_owned(),
                         pipeline_status: map_pipeline_status(&pr.details_response.pipeline),
+                        pipeline_url: pr.job_response.as_ref().map(|job| job.web_url.to_owned()),
                         comment_count: pr.details_response.user_notes_count,
                         approved: pr.approvals_response.approved,
                         user_profile_image: pr.details_response.author.avatar_url.to_owned(),
@@ -176,6 +224,10 @@ fn map_repository_data(
         .map(|branch| StandaloneBranch {
             branch_name: branch.details_response.name.to_string(),
             pipeline_status: map_pipeline_status(&branch.pipeline_response),
+            pipeline_url: branch
+                .job_response
+                .as_ref()
+                .map(|job| job.web_url.to_owned()),
         })
         .collect();
 

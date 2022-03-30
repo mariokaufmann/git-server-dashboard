@@ -4,11 +4,18 @@
 
   export let name: string;
   export let pipelineStatus: PipelineStatus;
+  export let pipelineUrl: string | undefined;
 </script>
 
 <div class="branch">
   <i class="fa-solid fa-code-branch" title="Branch" />
-  <PipelineStatusIcon {pipelineStatus} />
+  {#if pipelineUrl}
+    <a href={pipelineUrl} target="_blank">
+      <PipelineStatusIcon {pipelineStatus} />
+    </a>
+  {:else}
+    <PipelineStatusIcon {pipelineStatus} />
+  {/if}
   <span class="branch-name">{name}</span>
 </div>
 

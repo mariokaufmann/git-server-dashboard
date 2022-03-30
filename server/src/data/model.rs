@@ -25,10 +25,11 @@ pub struct PullRequest {
     pub branch_name: String,
     pub user_name: String,
     pub user_profile_image: String,
-    pub comment_count: u16,
+    pub comment_count: u32,
     pub last_activity_date: String,
     pub approved: bool,
     pub pipeline_status: PipelineStatus,
+    pub pipeline_url: Option<String>,
     pub link_url: String,
 }
 
@@ -36,6 +37,7 @@ pub struct PullRequest {
 pub struct StandaloneBranch {
     pub branch_name: String,
     pub pipeline_status: PipelineStatus,
+    pub pipeline_url: Option<String>,
 }
 
 #[derive(Serialize, Clone)]

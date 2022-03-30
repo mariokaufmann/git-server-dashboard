@@ -11,7 +11,13 @@
     <a href={pullRequest.link_url} target="_blank">
       <i class="fa-solid fa-code-pull-request" title="Pull Request" /></a
     >
-    <PipelineStatusIcon pipelineStatus={pullRequest.pipeline_status} />
+    {#if pullRequest.pipeline_url}
+      <a href={pullRequest.pipeline_url} target="_blank">
+        <PipelineStatusIcon pipelineStatus={pullRequest.pipeline_status} />
+      </a>
+    {:else}
+      <PipelineStatusIcon pipelineStatus={pullRequest.pipeline_status} />
+    {/if}
     <span
       ><a href={pullRequest.link_url} target="_blank"
         >{pullRequest.branch_name}</a
