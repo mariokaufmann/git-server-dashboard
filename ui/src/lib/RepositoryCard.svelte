@@ -15,6 +15,7 @@
     {#each repositoryBranchData.standalone_branches as standalone_branch}
       <GitBranch
         pipelineStatus={standalone_branch.pipeline_status}
+        pipelineUrl={standalone_branch.pipeline_url}
         name={standalone_branch.branch_name}
       />
     {/each}

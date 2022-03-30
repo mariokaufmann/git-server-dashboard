@@ -16,6 +16,7 @@ pub struct RepositoryBranchData {
 #[derive(Serialize, Clone)]
 pub struct PullRequestTargetBranch {
     pub branch_name: String,
+    pub pipeline_url: Option<String>,
     pub pipeline_status: PipelineStatus,
     pub pull_requests: Vec<PullRequest>,
 }
