@@ -5,6 +5,7 @@ export interface DashboardData {
 
 export interface RepositoryBranchData {
   repository_name: string;
+  repository_url: string;
   pull_request_target_branches: PullRequestTargetBranch[];
   standalone_branches: StandaloneBranch[];
 }

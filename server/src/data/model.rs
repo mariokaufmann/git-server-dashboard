@@ -9,6 +9,7 @@ pub struct DashboardData {
 #[derive(Serialize, Clone)]
 pub struct RepositoryBranchData {
     pub repository_name: String,
+    pub repository_url: String,
     pub pull_request_target_branches: Vec<PullRequestTargetBranch>,
     pub standalone_branches: Vec<StandaloneBranch>,
 }

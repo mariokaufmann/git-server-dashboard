@@ -1,36 +1,60 @@
 use std::collections::HashSet;
+use std::fmt;
+use std::fmt::Formatter;
+use std::path::Display;
 
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 
 use crate::data::gitlab::model::{
     BranchDetails, BranchResponse, GitlabPipelineStatus, JobResponse,
     MergeRequestApprovalsResponse, MergeRequestDetails, MergeRequestResponse, PipelineResponse,
-    SingleMergeRequestResponse,
+    ProjectResponse, SingleMergeRequestResponse,
 };
 use crate::data::gitlab::GitlabClient;
 use crate::data::model::{
     PipelineStatus, PullRequest, PullRequestTargetBranch, RepositoryBranchData, StandaloneBranch,
 };
 
+struct Project {
+    id: u32,
+    name: String,
+}
+
+impl fmt::Display for Project {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{} (ID {})", self.name, self.id)
+    }
+}
+
 pub async fn load_repository_data(
     client: &GitlabClient,
-    project_id: &str,
+    project_name: &str,
 ) -> anyhow::Result<RepositoryBranchData> {
-    let encoded_project_id = encode_id_for_gitlab_url(project_id);
-
-    let merge_request_details = get_merge_requests(client, &encoded_project_id, project_id).await?;
-    let branch_details = get_branches(client, &encoded_project_id, project_id).await?;
+    let project_response = get_project(client, project_name).await?;
+    let project = Project {id: project_response.id, name: project_name.to_owned()}
+    let merge_request_details =
+        get_merge_requests(client, &encoded_project_id, project_name).await?;
+    let branch_details = get_branches(client, &encoded_project_id, project_name).await?;
 
     let repository_branch_data =
-        map_repository_data(project_id, merge_request_details, branch_details)?;
+        map_repository_data(project_name, merge_request_details, branch_details)?;
 
     Ok(repository_branch_data)
 }
 
+async fn get_project(client: &GitlabClient, project_name: &str) -> anyhow::Result<ProjectResponse> {
+    let encoded_project_id = encode_id_for_gitlab_url(project_name);
+    client.request(&encoded_project_id).await.with_context(|| {
+        format!(
+            "Could not load project details for project {}.",
+            project_name
+        )
+    })
+}
+
 async fn get_merge_requests(
     client: &GitlabClient,
-    encoded_project_id: &str,
-    project_id: &str,
+    project: &Project,
 ) -> anyhow::Result<Vec<MergeRequestDetails>> {
     let merqe_requests: Vec<MergeRequestResponse> = client
         .request(&format!(
@@ -95,8 +119,7 @@ async fn get_merge_requests(
 
 async fn get_branches(
     client: &GitlabClient,
-    encoded_project_id: &str,
-    project_id: &str,
+    project: Project,
 ) -> anyhow::Result<Vec<BranchDetails>> {
     let branches: Vec<BranchResponse> = client
         .request(&format!("{}/repository/branches", encoded_project_id))
@@ -140,8 +163,7 @@ async fn get_branches(
 
 async fn get_latest_pipeline_job(
     client: &GitlabClient,
-    encoded_project_id: &str,
-    project_id: &str,
+    project: &Project,
     pipeline_id: u32,
 ) -> anyhow::Result<JobResponse> {
     let jobs: Vec<JobResponse> = client
@@ -166,7 +188,7 @@ async fn get_latest_pipeline_job(
 }
 
 fn map_repository_data(
-    project_id: &str,
+    project: &Project,
     merge_request: Vec<MergeRequestDetails>,
     branches: Vec<BranchDetails>,
 ) -> anyhow::Result<RepositoryBranchData> {

@@ -13,6 +13,12 @@ pub struct MergeRequestDetails {
 }
 
 #[derive(Deserialize)]
+pub struct ProjectResponse {
+    pub id: u32,
+    pub web_url: String,
+}
+
+#[derive(Deserialize)]
 pub struct BranchResponse {
     pub name: String,
 }
