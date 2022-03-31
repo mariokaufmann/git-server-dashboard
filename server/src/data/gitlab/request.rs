@@ -126,7 +126,7 @@ async fn get_branches(
             })?;
         let pipeline_response = pipelines_response.into_iter().next();
         let job_response = match &pipeline_response {
-            Some(pipeline) => Some(get_latest_pipeline_job(client, &project, pipeline.id).await?),
+            Some(pipeline) => Some(get_latest_pipeline_job(client, project, pipeline.id).await?),
             None => None,
         };
 
