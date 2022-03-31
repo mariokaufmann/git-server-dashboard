@@ -1,4 +1,18 @@
 use serde_derive::Deserialize;
+use std::fmt;
+use std::fmt::Formatter;
+
+pub struct ProjectDetails {
+    pub id: u32,
+    pub name: String,
+    pub url: String,
+}
+
+impl fmt::Display for ProjectDetails {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{} (ID {})", self.name, self.id)
+    }
+}
 
 pub struct BranchDetails {
     pub details_response: BranchResponse,
