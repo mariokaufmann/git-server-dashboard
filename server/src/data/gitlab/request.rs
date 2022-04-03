@@ -147,7 +147,10 @@ async fn get_latest_pipeline_job(
     pipeline_id: u32,
 ) -> anyhow::Result<JobResponse> {
     let jobs: Vec<JobResponse> = client
-        .request(&format!("{}/pipelines/{}/jobs", project.id, pipeline_id))
+        .request(&format!(
+            "{}/pipelines/{}/jobs?per_page=1",
+            project.id, pipeline_id
+        ))
         .await
         .with_context(|| {
             format!(
