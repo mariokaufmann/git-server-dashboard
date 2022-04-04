@@ -10,7 +10,7 @@
       case "Running":
         return "circle-stop";
       case "Canceled":
-        return "circle-trash";
+        return "circle-minus";
       case "Queued":
         return "circle-pause";
       case "None":
