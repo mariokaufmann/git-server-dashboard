@@ -84,7 +84,7 @@ async fn get_merge_requests(
             })?;
 
         let latest_pipeline_job = match &single_merge_request_response.pipeline {
-            Some(pipeline) => Some(get_latest_pipeline_job(client, project, pipeline.id).await?),
+            Some(pipeline) => get_latest_pipeline_job(client, project, pipeline.id).await?,
             None => None,
         };
 
@@ -126,7 +126,7 @@ async fn get_branches(
             })?;
         let pipeline_response = pipelines_response.into_iter().next();
         let job_response = match &pipeline_response {
-            Some(pipeline) => Some(get_latest_pipeline_job(client, project, pipeline.id).await?),
+            Some(pipeline) => get_latest_pipeline_job(client, project, pipeline.id).await?,
             None => None,
         };
 
@@ -145,7 +145,7 @@ async fn get_latest_pipeline_job(
     client: &GitlabClient,
     project: &ProjectDetails,
     pipeline_id: u32,
-) -> anyhow::Result<JobResponse> {
+) -> anyhow::Result<Option<JobResponse>> {
     let jobs: Vec<JobResponse> = client
         .request(&format!(
             "{}/pipelines/{}/jobs?per_page=1",
@@ -158,12 +158,7 @@ async fn get_latest_pipeline_job(
                 project.name, pipeline_id
             )
         })?;
-    let latest_job = jobs.into_iter().next().with_context(|| {
-        format!(
-            "Did not find any jobs for project {} and pipeline {}.",
-            project.name, pipeline_id
-        )
-    })?;
+    let latest_job = jobs.into_iter().next();
     Ok(latest_job)
 }
 
