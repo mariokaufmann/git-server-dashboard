@@ -7,7 +7,9 @@
 </script>
 
 <div class="card">
-  <h2>{repositoryBranchData.repository_name}</h2>
+  <a href={repositoryBranchData.repository_url} target="_blank">
+    <h2>{repositoryBranchData.repository_name}</h2>
+  </a>
   <div class="scrollable">
     {#each repositoryBranchData.pull_request_target_branches as pr_target_branch}
       <PullRequestTargetBranch {pr_target_branch} />
@@ -15,6 +17,7 @@
     {#each repositoryBranchData.standalone_branches as standalone_branch}
       <GitBranch
         pipelineStatus={standalone_branch.pipeline_status}
+        pipelineUrl={standalone_branch.pipeline_url}
         name={standalone_branch.branch_name}
       />
     {/each}
