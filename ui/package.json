@@ -12,26 +12,26 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "1.0.0-next.41",
+    "@sveltejs/vite-plugin-svelte": "1.0.0-next.42",
     "@tsconfig/svelte": "3.0.0",
-    "@typescript-eslint/eslint-plugin": "5.18.0",
-    "@typescript-eslint/parser": "5.18.0",
+    "@typescript-eslint/eslint-plugin": "5.21.0",
+    "@typescript-eslint/parser": "5.21.0",
     "cpy-cli": "4.1.0",
-    "eslint": "8.13.0",
+    "eslint": "8.14.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-svelte3": "3.4.1",
     "prettier": "2.6.2",
     "prettier-plugin-svelte": "2.7.0",
-    "svelte": "3.47.0",
-    "svelte-check": "2.6.0",
-    "svelte-preprocess": "4.10.5",
-    "tslib": "2.3.1",
-    "typescript": "4.6.3",
-    "vite": "2.9.1"
+    "svelte": "3.48.0",
+    "svelte-check": "2.7.0",
+    "svelte-preprocess": "4.10.6",
+    "tslib": "2.4.0",
+    "typescript": "4.6.4",
+    "vite": "2.9.6"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.1.1",
-    "dayjs": "1.11.0",
+    "dayjs": "1.11.1",
     "modern-normalize": "1.1.0"
   }
 }
