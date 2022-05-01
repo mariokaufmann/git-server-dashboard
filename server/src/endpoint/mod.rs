@@ -1,8 +1,7 @@
 use axum::extract::Extension;
 use axum::response::IntoResponse;
 use axum::Json;
-use log::{error, warn};
-use serde_json::json;
+use log::warn;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{LockableCache, DASHBOARD_VERSION};
