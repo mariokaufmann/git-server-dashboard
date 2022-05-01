@@ -2,19 +2,24 @@ use axum::error_handling::HandleErrorLayer;
 use axum::http::StatusCode;
 use axum::Router;
 use log::error;
+use tokio::sync::mpsc::UnboundedSender;
 use tower::ServiceBuilder;
 
 use crate::endpoint::{get_dashboard_data, get_server_version};
 use crate::LockableCache;
 
-pub fn get_router(cache: LockableCache) -> anyhow::Result<Router> {
+pub fn get_router(
+    cache: LockableCache,
+    reload_sender: UnboundedSender<()>,
+) -> anyhow::Result<Router> {
     let api_router = Router::new()
         .route("/api/version", axum::routing::get(get_server_version))
         .route(
             "/api/dashboard-data",
             axum::routing::get(get_dashboard_data),
         )
-        .layer(axum::extract::Extension(cache));
+        .layer(axum::extract::Extension(cache))
+        .layer(axum::extract::Extension(reload_sender));
 
     // routes (matched from bottom to top from more specific to less specific)
     let router = Router::new()

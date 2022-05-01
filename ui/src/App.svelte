@@ -17,7 +17,7 @@
         ),
       };
     });
-    timeout = setTimeout(reloadData, 10_000);
+    timeout = setTimeout(reloadData, 2_000);
   }
 
   function onVisibilityChange() {

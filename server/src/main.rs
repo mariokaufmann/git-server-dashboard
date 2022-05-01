@@ -3,7 +3,8 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::Context;
-use log::{error, info};
+use log::{error, info, warn};
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use crate::config::Configuration;
 use crate::data::cache::DashboardDataCache;
@@ -26,16 +27,20 @@ async fn main() -> anyhow::Result<()> {
 
     let cache = Arc::new(tokio::sync::Mutex::new(DashboardDataCache::new()));
     let data_loader = DataLoader::new(&configuration);
-    tokio::spawn(keep_loading_data(cache.clone(), data_loader));
+    let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
+    tokio::spawn(keep_loading_data(rx, cache.clone(), data_loader));
 
-    start_with_config(cache).await?;
+    start_with_config(cache, tx).await?;
 
     Ok(())
 }
 
-async fn start_with_config(cache: LockableCache) -> anyhow::Result<()> {
+async fn start_with_config(
+    cache: LockableCache,
+    reload_sender: UnboundedSender<()>,
+) -> anyhow::Result<()> {
     info!("Starting gitlab branch dashboard server...");
-    match endpoint::routes::get_router(cache) {
+    match endpoint::routes::get_router(cache, reload_sender) {
         Ok(router) => {
             let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
             if let Err(err) = axum_server::bind(addr)
@@ -50,26 +55,34 @@ async fn start_with_config(cache: LockableCache) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn keep_loading_data(cache: LockableCache, data_loader: DataLoader) {
+async fn keep_loading_data(
+    mut reload_receiver: UnboundedReceiver<()>,
+    cache: LockableCache,
+    data_loader: DataLoader,
+) {
     loop {
-        let locked_cache = cache.lock().await;
-        let should_reload = locked_cache.should_reload();
-        drop(locked_cache);
-        if should_reload {
-            match data_loader.load_data().await {
-                Ok(data) => {
-                    let mut locked_cache = cache.lock().await;
-                    locked_cache.cache_data(data);
-                    drop(locked_cache);
-                    tokio::time::sleep(Duration::from_secs(3)).await;
-                }
-                Err(err) => {
-                    error!("Could not reload dashboard data: {:#}", err);
-                    tokio::time::sleep(Duration::from_secs(30)).await;
+        match reload_receiver.recv().await {
+            Some(()) => {
+                let locked_cache = cache.lock().await;
+                let should_reload = locked_cache.should_reload();
+                drop(locked_cache);
+                if should_reload {
+                    match data_loader.load_data().await {
+                        Ok(data) => {
+                            let mut locked_cache = cache.lock().await;
+                            locked_cache.cache_data(data);
+                            drop(locked_cache);
+                        }
+                        Err(err) => {
+                            error!("Could not reload dashboard data: {:#}", err);
+                        }
+                    }
                 }
             }
-        } else {
-            tokio::time::sleep(Duration::from_secs(3)).await;
+            None => {
+                warn!("Could not receive reload event anymore.");
+                break;
+            }
         }
     }
 }
