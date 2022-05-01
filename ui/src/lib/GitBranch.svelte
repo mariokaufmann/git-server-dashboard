@@ -28,6 +28,7 @@
 
   .branch-name {
     margin-left: 1rem;
+    overflow-wrap: anywhere;
   }
 
   .branch > :global(*:not(:first-child)) {

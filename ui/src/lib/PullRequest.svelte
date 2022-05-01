@@ -18,7 +18,7 @@
     {:else}
       <PipelineStatusIcon pipelineStatus={pullRequest.pipeline_status} />
     {/if}
-    <span
+    <span class="branch-name"
       ><a href={pullRequest.link_url} target="_blank"
         >{pullRequest.branch_name}</a
       ></span
@@ -63,6 +63,10 @@
 
   .pr-metadata > :global(*:not(:first-child)) {
     margin-left: 0.5rem;
+  }
+
+  .branch-name {
+    overflow-wrap: anywhere;
   }
 
   img {
