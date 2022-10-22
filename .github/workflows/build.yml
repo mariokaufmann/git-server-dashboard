@@ -21,20 +21,18 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
+      - uses: dtolnay/rust-toolchain@stable
       - name: Lint UI
         if: ${{ matrix.label == 'ubuntu-latest' }}
         run: |
-          npm ci --no-optional
+          npm ci --omit=optional
           npm run lint
         working-directory: ./ui
       - name: Build UI
         run: |
-          npm ci --no-optional
+          npm ci --omit=optional
           npm run build
         working-directory: ./ui
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
       - name: Check formatting of server
         run: |
           rustup component add rustfmt
