@@ -38,7 +38,7 @@ async fn start_with_config(
     cache: LockableCache,
     reload_sender: UnboundedSender<()>,
 ) -> anyhow::Result<()> {
-    info!("Starting gitlab branch dashboard server...");
+    info!("Starting branch dashboard server...");
     match endpoint::routes::get_router(cache, reload_sender) {
         Ok(router) => {
             let addr = SocketAddr::from(([0, 0, 0, 0], 8080));

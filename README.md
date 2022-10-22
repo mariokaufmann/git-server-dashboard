@@ -1,1 +1,1 @@
-# gitlab-branch-dashboard
+# branch-dashboard

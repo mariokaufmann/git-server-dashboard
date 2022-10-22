@@ -11,8 +11,8 @@ pub struct DataLoader {
 impl DataLoader {
     pub fn new(configuration: &Configuration) -> Self {
         let gitlab_client = GitlabClient::new(
-            configuration.gitlab_url.to_string(),
-            configuration.gitlab_token.to_string(),
+            configuration.vcs_server_url.to_string(),
+            configuration.vcs_server_token.to_string(),
         );
         let projects = configuration.projects.clone();
 
