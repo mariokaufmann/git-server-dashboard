@@ -34,9 +34,8 @@ pub fn load_configuration_from_environment() -> anyhow::Result<Configuration> {
     let vcs_server_token = std::env::var("BRANCH-DASHBOARD_VCS-SERVER-TOKEN").context(
         "Server authentication token must be set in environment variable 'BRANCH-DASHBOARD_VCS-SERVER-TOKEN'",
     )?;
-    let projects_string = std::env::var("BRANCH-DASHBOARD-PROJECTS").context(
-        "Projects must be set in environment variable 'BRANCH-DASHBOARD-PROJECTS'",
-    )?;
+    let projects_string = std::env::var("BRANCH-DASHBOARD-PROJECTS")
+        .context("Projects must be set in environment variable 'BRANCH-DASHBOARD-PROJECTS'")?;
     let projects = projects_string
         .split(';')
         .map(|split| split.to_owned())

@@ -8,13 +8,13 @@ jobs:
         include:
           - label: ubuntu-latest
             script: chmod +x ./package/package.sh && ./package/package.sh linux
-            artifact: gitlab-branch-dashboard-linux
+            artifact: branch-dashboard-linux
           - label: macos-latest
             script: chmod +x ./package/package.sh && ./package/package.sh macos
-            artifact: gitlab-branch-dashboard-macos
+            artifact: branch-dashboard-macos
           - label: windows-latest
             script: .\package\package.ps1
-            artifact: gitlab-branch-dashboard-windows
+            artifact: branch-dashboard-windows
     runs-on: [ '${{ matrix.label }}' ]
     steps:
       - uses: actions/checkout@v3
