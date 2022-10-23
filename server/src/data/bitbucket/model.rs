@@ -1,13 +1,19 @@
 use serde_derive::Deserialize;
 
+pub struct PullRequestDetails {
+    pub details_response: PullRequestResponse,
+    pub comments_count: u32,
+}
+
 #[derive(Deserialize)]
-pub struct PaginatedResponse<T: for <'de> serde::Deserialize<'de>> {
+pub struct PaginatedResponse<T> {
     pub values: Vec<T>,
 }
 
 #[derive(Deserialize)]
 pub struct RepositoryResponse {
     pub name: String,
+    pub links: LinksResponse,
 }
 
 #[derive(Deserialize)]
@@ -24,6 +30,7 @@ pub struct BuildStatusResponse {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PullRequestResponse {
     pub id: u32,
     pub from_ref: GitRefResponse,
@@ -85,5 +92,5 @@ pub enum BitbucketBuildState {
     #[serde(rename = "INPROGRESS")]
     InProgress,
     #[serde(rename = "FAILED")]
-    Failed
+    Failed,
 }

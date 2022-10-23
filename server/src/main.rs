@@ -25,7 +25,7 @@ async fn main() -> anyhow::Result<()> {
     logger::init_logger(configuration.verbose);
 
     let cache = Arc::new(tokio::sync::Mutex::new(DashboardDataCache::new()));
-    let data_loader = DataLoader::new(&configuration);
+    let data_loader = DataLoader::new(&configuration)?;
     let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
     tokio::spawn(keep_loading_data(rx, cache.clone(), data_loader));
 

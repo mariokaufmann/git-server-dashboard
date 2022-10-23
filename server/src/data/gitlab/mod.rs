@@ -11,16 +11,18 @@ mod request;
 
 pub struct GitlabClient {
     client: reqwest::Client,
-    gitlab_url: String,
-    gitlab_token: String,
+    url: String,
+    token: String,
+    projects: Vec<String>,
 }
 
 impl GitlabClient {
-    pub fn new(gitlab_url: String, gitlab_token: String) -> GitlabClient {
+    pub fn new(projects: &[String], url: String, token: String) -> GitlabClient {
         GitlabClient {
             client: reqwest::Client::new(),
-            gitlab_url,
-            gitlab_token,
+            url,
+            token,
+            projects: Vec::from(projects),
         }
     }
 
@@ -28,13 +30,13 @@ impl GitlabClient {
     where
         T: serde::de::DeserializeOwned,
     {
-        let full_url = format!("{}/api/v4/projects/{}", self.gitlab_url, url);
+        let full_url = format!("{}/api/v4/projects/{}", self.url, url);
         let response = self
             .client
             .request(Method::GET, full_url)
             .header(
                 http::header::AUTHORIZATION,
-                format!("Bearer {}", self.gitlab_token),
+                format!("Bearer {}", self.token),
             )
             .send()
             .await
@@ -53,23 +55,20 @@ impl GitlabClient {
             .context("Could not parse response body from JSON.")?;
         Ok(parsed_body)
     }
-}
 
-pub async fn load_dashboard_data(
-    client: &GitlabClient,
-    projects: &[String],
-) -> anyhow::Result<DashboardData> {
-    let mut repositories = Vec::new();
-    for project in projects {
-        let repository_data = load_repository_data(client, project)
-            .await
-            .with_context(|| format!("Could not load data for repository {}.", project))?;
-        repositories.push(repository_data);
+    pub async fn load_dashboard_data(&self) -> anyhow::Result<DashboardData> {
+        let mut repositories = Vec::new();
+        for project in &self.projects {
+            let repository_data = load_repository_data(&self, project)
+                .await
+                .with_context(|| format!("Could not load data for repository {}.", project))?;
+            repositories.push(repository_data);
+        }
+        let last_updated_date = Utc::now();
+        let formatted_last_updated_date = format!("{}", last_updated_date.format("%+"));
+        Ok(DashboardData {
+            last_updated_date: Some(formatted_last_updated_date),
+            repositories,
+        })
     }
-    let last_updated_date = Utc::now();
-    let formatted_last_updated_date = format!("{}", last_updated_date.format("%+"));
-    Ok(DashboardData {
-        last_updated_date: Some(formatted_last_updated_date),
-        repositories,
-    })
 }
