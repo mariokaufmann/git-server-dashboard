@@ -19,23 +19,27 @@ impl DataLoader {
             .collect::<anyhow::Result<Vec<Repository>>>()
             .context("Could not parse repositories from configuration.")?;
 
-        let gitlab_client = configuration.gitlab.as_ref().map(|gitlab_config| {
-            GitlabClient::new(
+        let mut gitlab_client = None;
+        if let Some(gitlab_config) = &configuration.gitlab {
+            gitlab_client = Some(GitlabClient::new(
                 &repositories,
                 gitlab_config.url.clone(),
                 gitlab_config.token.clone(),
-            )
-        });
-        let bitbucket_client = configuration.bitbucket.as_ref().map(|bitbucket_config| {
-            // TODO properly
-            BitbucketClient::new(
-                &repositories,
-                bitbucket_config.url.clone(),
-                bitbucket_config.user.clone(),
-                bitbucket_config.password.clone(),
-            )
-            .unwrap()
-        });
+            ));
+        }
+
+        let mut bitbucket_client = None;
+        if let Some(bitbucket_config) = &configuration.bitbucket {
+            bitbucket_client = Some(
+                BitbucketClient::new(
+                    &repositories,
+                    bitbucket_config.url.clone(),
+                    bitbucket_config.user.clone(),
+                    bitbucket_config.password.clone(),
+                )
+                .context("Could not create bitbucket client.")?,
+            );
+        }
 
         if gitlab_client.is_none() && bitbucket_client.is_none() {
             return Err(anyhow!("Invalid configuration: No VCS server configured."));
