@@ -8,14 +8,15 @@ use crate::data::model::{
     DashboardData, PipelineStatus, PullRequest, PullRequestTargetBranch, RepositoryBranchData,
     StandaloneBranch,
 };
+use crate::model::Repository;
 use anyhow::{anyhow, Context};
 use chrono::{TimeZone, Utc};
 use std::collections::{HashMap, HashSet};
 
-fn get_repo_sub_url(project_name: &str, repository_name: &str, suffix: &str) -> String {
+fn get_repo_sub_url(repository: &Repository, suffix: &str) -> String {
     format!(
         "api/1.0/projects/{}/repos/{}/{}",
-        project_name, repository_name, suffix
+        repository.group, repository.name, suffix
     )
 }
 
@@ -29,17 +30,17 @@ fn get_user_url(user_slug: &str) -> String {
 
 pub async fn load_dashboard_data(
     client: &BitbucketClient,
-    projects: &[(String, String)],
+    repositories: &[Repository],
 ) -> anyhow::Result<DashboardData> {
     let mut user_map: HashMap<String, UserResponse> = HashMap::new();
     // Option<BuildStatusResponse> because not every commit has a corresponding build
     let mut build_status_map: HashMap<String, Option<BuildStatusResponse>> = HashMap::new();
 
-    let mut repositories: Vec<RepositoryBranchData> = Vec::new();
+    let mut repository_branch_datas: Vec<RepositoryBranchData> = Vec::new();
 
-    for project in projects {
-        let repository = get_repository(client, project).await?;
-        let branches = get_branches(client, project).await?;
+    for repository in repositories {
+        let repository_response = get_repository(client, repository).await?;
+        let branches = get_branches(client, repository).await?;
 
         for branch in &branches {
             let commit_id = branch.latest_commit.clone();
@@ -49,7 +50,7 @@ pub async fn load_dashboard_data(
             }
         }
 
-        let pull_requests = get_pull_requests(client, project).await?;
+        let pull_requests = get_pull_requests(client, repository).await?;
 
         for pull_request in &pull_requests {
             let commit_id = pull_request.details_response.from_ref.latest_commit.clone();
@@ -66,33 +67,31 @@ pub async fn load_dashboard_data(
         }
 
         let repository_branch_data = map_repository_data(
-            repository,
+            repository_response,
             branches,
             pull_requests,
             &user_map,
             &build_status_map,
         )?;
-        repositories.push(repository_branch_data);
+        repository_branch_datas.push(repository_branch_data);
     }
 
-    // TODO remove duplication (e.g. just return array of repos)
-    let last_updated_date = Utc::now();
-    let formatted_last_updated_date = last_updated_date.format("%+").to_string();
+    let last_updated_date = Utc::now().format("%+").to_string();
     Ok(DashboardData {
-        last_updated_date: Some(formatted_last_updated_date),
-        repositories,
+        last_updated_date: Some(last_updated_date),
+        repositories: repository_branch_datas,
     })
 }
 
 async fn get_repository(
     client: &BitbucketClient,
-    project: &(String, String),
+    repository: &Repository,
 ) -> anyhow::Result<RepositoryResponse> {
-    let url = get_repo_sub_url(&project.0, &project.1, "");
+    let url = get_repo_sub_url(repository, "");
     let response = client.request(&url).await.with_context(|| {
         format!(
-            "Could not load repository details for project: {}/{}",
-            project.0, project.1
+            "Could not load repository details for repository: {}",
+            repository
         )
     })?;
     Ok(response)
@@ -100,52 +99,40 @@ async fn get_repository(
 
 async fn get_branches(
     client: &BitbucketClient,
-    project: &(String, String),
+    repository: &Repository,
 ) -> anyhow::Result<Vec<BranchResponse>> {
-    // TODO switch away from tuple
-    let url = get_repo_sub_url(&project.0, &project.1, "branches");
-    let response: PaginatedResponse<BranchResponse> =
-        client.request(&url).await.with_context(|| {
-            format!(
-                "Could not load branches for project: {}/{}",
-                project.0, project.1
-            )
-        })?;
+    let url = get_repo_sub_url(repository, "branches");
+    let response: PaginatedResponse<BranchResponse> = client
+        .request(&url)
+        .await
+        .with_context(|| format!("Could not load branches for repository: {}", repository))?;
 
     Ok(response.values)
 }
 
-// TODO load build statuses after loading branches and PRs only once
-// TODO load users after loading branches and PRs only once
-
 async fn get_pull_requests(
     client: &BitbucketClient,
-    project: &(String, String),
+    repository: &Repository,
 ) -> anyhow::Result<Vec<PullRequestDetails>> {
-    // TODO switch away from tuple
-    let pull_request_url = get_repo_sub_url(&project.0, &project.1, "pull-requests");
+    let pull_request_url = get_repo_sub_url(repository, "pull-requests");
     let pull_request_response: PaginatedResponse<PullRequestResponse> =
         client.request(&pull_request_url).await.with_context(|| {
             format!(
-                "Could not load pull requests for project: {}/{}",
-                project.0, project.1
+                "Could not load pull requests for repository: {}",
+                repository
             )
         })?;
 
     let mut pull_request_details = Vec::new();
     for pull_request in pull_request_response.values.into_iter() {
         let comments_url = get_repo_sub_url(
-            &project.0,
-            &project.1,
+            repository,
             &format!("pull-requests/{}/blocker-comments", pull_request.id),
         );
-        let comments_response: PaginatedResponse<PullRequestCommentsResponse> =
-            client.request(&comments_url).await.with_context(|| {
-                format!(
-                    "Could not load comments for project: {}/{}",
-                    project.0, project.1
-                )
-            })?;
+        let comments_response: PaginatedResponse<PullRequestCommentsResponse> = client
+            .request(&comments_url)
+            .await
+            .with_context(|| format!("Could not load comments for repository: {}", repository))?;
         let pull_request_detail = PullRequestDetails {
             details_response: pull_request,
             comments_count: comments_response.values.len() as u32,

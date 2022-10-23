@@ -15,6 +15,7 @@ mod config;
 mod data;
 mod endpoint;
 mod logger;
+mod model;
 
 const DASHBOARD_VERSION: &str = env!("CARGO_PKG_VERSION");
 

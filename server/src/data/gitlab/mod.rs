@@ -5,6 +5,7 @@ use reqwest::Method;
 
 use crate::data::gitlab::request::load_repository_data;
 use crate::data::model::DashboardData;
+use crate::model::Repository;
 
 mod model;
 mod request;
@@ -13,16 +14,16 @@ pub struct GitlabClient {
     client: reqwest::Client,
     url: String,
     token: String,
-    projects: Vec<String>,
+    repositories: Vec<Repository>,
 }
 
 impl GitlabClient {
-    pub fn new(projects: &[String], url: String, token: String) -> GitlabClient {
+    pub fn new(repositories: &[Repository], url: String, token: String) -> GitlabClient {
         GitlabClient {
             client: reqwest::Client::new(),
             url,
             token,
-            projects: Vec::from(projects),
+            repositories: Vec::from(repositories),
         }
     }
 
@@ -58,16 +59,16 @@ impl GitlabClient {
 
     pub async fn load_dashboard_data(&self) -> anyhow::Result<DashboardData> {
         let mut repositories = Vec::new();
-        for project in &self.projects {
-            let repository_data = load_repository_data(self, project)
+        for repository in &self.repositories {
+            let repository_data = load_repository_data(self, repository)
                 .await
-                .with_context(|| format!("Could not load data for repository {}.", project))?;
+                .with_context(|| format!("Could not load data for repository {}.", repository))?;
             repositories.push(repository_data);
         }
-        let last_updated_date = Utc::now();
-        let formatted_last_updated_date = format!("{}", last_updated_date.format("%+"));
+
+        let last_updated_date = Utc::now().format("%+").to_string();
         Ok(DashboardData {
-            last_updated_date: Some(formatted_last_updated_date),
+            last_updated_date: Some(last_updated_date),
             repositories,
         })
     }

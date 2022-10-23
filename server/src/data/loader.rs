@@ -1,6 +1,7 @@
 use crate::data::bitbucket::BitbucketClient;
 use crate::data::gitlab::GitlabClient;
 use crate::data::model::DashboardData;
+use crate::model::Repository;
 use crate::Configuration;
 use anyhow::{anyhow, Context};
 
@@ -11,9 +12,16 @@ pub struct DataLoader {
 
 impl DataLoader {
     pub fn new(configuration: &Configuration) -> anyhow::Result<Self> {
+        let repositories = configuration
+            .repositories
+            .iter()
+            .map(|repo| Repository::from_slug(repo))
+            .collect::<anyhow::Result<Vec<Repository>>>()
+            .context("Could not parse repositories from configuration.")?;
+
         let gitlab_client = configuration.gitlab.as_ref().map(|gitlab_config| {
             GitlabClient::new(
-                &configuration.projects,
+                &repositories,
                 gitlab_config.url.clone(),
                 gitlab_config.token.clone(),
             )
@@ -21,7 +29,7 @@ impl DataLoader {
         let bitbucket_client = configuration.bitbucket.as_ref().map(|bitbucket_config| {
             // TODO properly
             BitbucketClient::new(
-                &configuration.projects,
+                &repositories,
                 bitbucket_config.url.clone(),
                 bitbucket_config.user.clone(),
                 bitbucket_config.password.clone(),

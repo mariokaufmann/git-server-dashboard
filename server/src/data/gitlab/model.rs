@@ -1,16 +1,17 @@
+use crate::model::Repository;
 use serde_derive::Deserialize;
 use std::fmt;
 use std::fmt::Formatter;
 
 pub struct ProjectDetails {
     pub id: u32,
-    pub name: String,
+    pub repository: Repository,
     pub url: String,
 }
 
 impl fmt::Display for ProjectDetails {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "{} (ID {})", self.name, self.id)
+        write!(f, "{} (ID {})", self.repository, self.id)
     }
 }
 

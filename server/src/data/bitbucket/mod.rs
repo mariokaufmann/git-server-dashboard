@@ -1,5 +1,6 @@
 use crate::data::bitbucket::request::load_dashboard_data;
 use crate::data::model::DashboardData;
+use crate::model::Repository;
 use anyhow::{anyhow, Context};
 use axum::http::Method;
 
@@ -11,36 +12,22 @@ pub struct BitbucketClient {
     url: String,
     user: String,
     password: String,
-    repositories: Vec<(String, String)>,
-}
-
-fn parse_project(project: &String) -> anyhow::Result<(String, String)> {
-    let mut parts: Vec<&str> = project.split('/').collect();
-    let repository_name = parts
-        .pop()
-        .ok_or_else(|| anyhow!("Could not parse repository name from {}.", project))?;
-    let project_name = parts
-        .pop()
-        .ok_or_else(|| anyhow!("Could not parse project name from {}.", project))?;
-    Ok((project_name.to_string(), repository_name.to_string()))
+    repositories: Vec<Repository>,
 }
 
 impl BitbucketClient {
     pub fn new(
-        projects: &[String],
+        repositories: &[Repository],
         url: String,
         user: String,
         password: String,
     ) -> anyhow::Result<BitbucketClient> {
-        let repositories: anyhow::Result<Vec<(String, String)>> =
-            projects.iter().map(parse_project).collect();
-        let repositories = repositories?;
         Ok(BitbucketClient {
             client: reqwest::Client::new(),
             url,
             user,
             password,
-            repositories,
+            repositories: Vec::from(repositories),
         })
     }
 

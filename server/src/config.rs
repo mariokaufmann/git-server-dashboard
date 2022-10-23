@@ -25,8 +25,7 @@ pub struct Configuration {
     pub verbose: bool,
     pub gitlab: Option<GitlabConfiguration>,
     pub bitbucket: Option<BitbucketConfiguration>,
-    // TODO find better name for this
-    pub projects: Vec<String>,
+    pub repositories: Vec<String>,
 }
 
 pub fn load_configuration_from_environment() -> anyhow::Result<Configuration> {
