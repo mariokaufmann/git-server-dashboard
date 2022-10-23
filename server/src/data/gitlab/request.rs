@@ -164,10 +164,10 @@ async fn get_latest_pipeline_job(
 
 fn map_repository_data(
     project: &ProjectDetails,
-    merge_request: Vec<MergeRequestDetails>,
+    merge_requests: Vec<MergeRequestDetails>,
     branches: Vec<BranchDetails>,
 ) -> anyhow::Result<RepositoryBranchData> {
-    let pull_request_target_branch_names: HashSet<&String> = merge_request
+    let pull_request_target_branch_names: HashSet<&String> = merge_requests
         .iter()
         .map(|pr_details| &pr_details.details_response.target_branch)
         .collect();
@@ -175,7 +175,7 @@ fn map_repository_data(
         pull_request_target_branch_names
             .iter()
             .map(|name| {
-                let pull_requests = merge_request
+                let pull_requests = merge_requests
                     .iter()
                     .filter(|pr| pr.details_response.target_branch.eq(*name))
                     .map(|pr| PullRequest {
@@ -212,7 +212,7 @@ fn map_repository_data(
     let standalone_branches = branches
         .iter()
         .filter(|branch| {
-            !merge_request.iter().any(|mr| {
+            !merge_requests.iter().any(|mr| {
                 mr.details_response
                     .source_branch
                     .eq(&branch.details_response.name)

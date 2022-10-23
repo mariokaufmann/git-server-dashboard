@@ -1,3 +1,5 @@
+extern crate core;
+
 use std::net::SocketAddr;
 use std::sync::Arc;
 
@@ -66,6 +68,7 @@ async fn keep_loading_data(
                 let should_reload = locked_cache.should_reload();
                 drop(locked_cache);
                 if should_reload {
+                    info!("Reloading dashboard data.");
                     match data_loader.load_data().await {
                         Ok(data) => {
                             let mut locked_cache = cache.lock().await;
@@ -76,6 +79,7 @@ async fn keep_loading_data(
                             error!("Could not reload dashboard data: {:#}", err);
                         }
                     }
+                    info!("Reloaded dashboard data.");
                 }
             }
             None => {

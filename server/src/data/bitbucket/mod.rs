@@ -2,7 +2,6 @@ use crate::data::bitbucket::request::load_dashboard_data;
 use crate::data::model::DashboardData;
 use anyhow::{anyhow, Context};
 use axum::http::Method;
-use std::collections::HashMap;
 
 mod model;
 mod request;
@@ -16,7 +15,7 @@ pub struct BitbucketClient {
 }
 
 fn parse_project(project: &String) -> anyhow::Result<(String, String)> {
-    let mut parts: Vec<&str> = project.split("/").collect();
+    let mut parts: Vec<&str> = project.split('/').collect();
     let repository_name = parts
         .pop()
         .ok_or_else(|| anyhow!("Could not parse repository name from {}.", project))?;
@@ -73,6 +72,6 @@ impl BitbucketClient {
     }
 
     pub async fn load_dashboard_data(&self) -> anyhow::Result<DashboardData> {
-        load_dashboard_data(&self, &self.repositories).await
+        load_dashboard_data(self, &self.repositories).await
     }
 }

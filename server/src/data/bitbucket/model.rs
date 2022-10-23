@@ -34,6 +34,7 @@ pub struct BuildStatusResponse {
 pub struct PullRequestResponse {
     pub id: u32,
     pub from_ref: GitRefResponse,
+    pub to_ref: GitRefResponse,
     pub author: PullRequestUserResponse,
     pub reviewers: Vec<PullRequestUserResponse>,
     // epoch time in millis

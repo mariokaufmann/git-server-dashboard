@@ -59,7 +59,7 @@ impl GitlabClient {
     pub async fn load_dashboard_data(&self) -> anyhow::Result<DashboardData> {
         let mut repositories = Vec::new();
         for project in &self.projects {
-            let repository_data = load_repository_data(&self, project)
+            let repository_data = load_repository_data(self, project)
                 .await
                 .with_context(|| format!("Could not load data for repository {}.", project))?;
             repositories.push(repository_data);
