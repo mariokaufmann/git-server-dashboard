@@ -29,6 +29,7 @@ fn get_user_url(user_slug: &str) -> String {
 }
 
 pub async fn load_dashboard_data(
+    bitbucket_url: &str,
     client: &BitbucketClient,
     repositories: &[Repository],
 ) -> anyhow::Result<DashboardData> {
@@ -67,6 +68,7 @@ pub async fn load_dashboard_data(
         }
 
         let repository_branch_data = map_repository_data(
+            bitbucket_url,
             repository_response,
             branches,
             pull_requests,
@@ -166,6 +168,7 @@ async fn get_build_status(
 }
 
 fn map_repository_data(
+    bitbucket_url: &str,
     mut repository: RepositoryResponse,
     branches: Vec<BranchResponse>,
     pull_requests: Vec<PullRequestDetails>,
@@ -218,6 +221,11 @@ fn map_repository_data(
                                 anyhow!("Did not find self link for pull request.")
                             })?;
 
+                        let mut avatar_url = author.avatar_url.to_owned();
+                        if avatar_url.starts_with('/') {
+                            avatar_url = format!("{}{}", bitbucket_url, avatar_url);
+                        }
+
                         Ok(PullRequest {
                             branch_name: pr.details_response.from_ref.display_id.to_owned(),
                             user_name: pr.details_response.author.user.display_name.to_owned(),
@@ -225,7 +233,7 @@ fn map_repository_data(
                             pipeline_url: build_status.as_ref().map(|status| status.url.to_owned()),
                             comment_count: pr.comments_count,
                             approved,
-                            user_profile_image: author.avatar_url.to_owned(),
+                            user_profile_image: avatar_url,
                             last_activity_date: formatted_last_updated_date,
                             link_url: link_response.href.to_owned(),
                         })

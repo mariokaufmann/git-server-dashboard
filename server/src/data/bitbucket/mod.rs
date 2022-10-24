@@ -59,6 +59,6 @@ impl BitbucketClient {
     }
 
     pub async fn load_dashboard_data(&self) -> anyhow::Result<DashboardData> {
-        load_dashboard_data(self, &self.repositories).await
+        load_dashboard_data(&self.url, self, &self.repositories).await
     }
 }
