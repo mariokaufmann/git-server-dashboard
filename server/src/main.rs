@@ -24,7 +24,7 @@ type LockableCache = Arc<tokio::sync::Mutex<DashboardDataCache>>;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let configuration = config::load_configuration_from_environment()
-        .context("Could not load configuration from environment")?;
+        .context("Could not load configuration from file or environment.")?;
     logger::init_logger(configuration.verbose);
 
     let cache = Arc::new(tokio::sync::Mutex::new(DashboardDataCache::new()));
@@ -32,19 +32,20 @@ async fn main() -> anyhow::Result<()> {
     let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
     tokio::spawn(keep_loading_data(rx, cache.clone(), data_loader));
 
-    start_with_config(cache, tx).await?;
+    start_with_config(configuration.port, cache, tx).await?;
 
     Ok(())
 }
 
 async fn start_with_config(
+    port: u16,
     cache: LockableCache,
     reload_sender: UnboundedSender<()>,
 ) -> anyhow::Result<()> {
     info!("Starting branch dashboard server...");
     match endpoint::routes::get_router(cache, reload_sender) {
         Ok(router) => {
-            let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+            let addr = SocketAddr::from(([0, 0, 0, 0], port));
             if let Err(err) = axum_server::bind(addr)
                 .serve(router.into_make_service())
                 .await

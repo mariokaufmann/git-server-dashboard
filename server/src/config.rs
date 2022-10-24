@@ -23,6 +23,7 @@ pub struct BitbucketConfiguration {
 #[derive(Clone, Debug, Deserialize)]
 pub struct Configuration {
     pub verbose: bool,
+    pub port: u16,
     pub gitlab: Option<GitlabConfiguration>,
     pub bitbucket: Option<BitbucketConfiguration>,
     pub repositories: Vec<String>,
@@ -31,7 +32,7 @@ pub struct Configuration {
 pub fn load_configuration_from_environment() -> anyhow::Result<Configuration> {
     let config = config::Config::builder()
         .add_source(config::File::with_name("./config"))
-        .add_source(config::Environment::with_prefix("BRANCH-DASHBOARD").separator("_"))
+        .add_source(config::Environment::with_prefix("BRANCHDASHBOARD").separator("_"))
         .build()
         .context("Could not load configuration.")?;
 
