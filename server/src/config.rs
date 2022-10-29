@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use anyhow::Context;
 use serde::Deserialize;
 
@@ -29,10 +31,21 @@ pub struct Configuration {
     pub repositories: Vec<String>,
 }
 
-pub fn load_configuration_from_environment() -> anyhow::Result<Configuration> {
-    let config = config::Config::builder()
-        .add_source(config::File::with_name("./config"))
-        .add_source(config::Environment::with_prefix("BRANCHDASHBOARD").separator("_"))
+pub fn load_configuration() -> anyhow::Result<Configuration> {
+    let mut config_builder = config::Config::builder()
+        .add_source(config::Environment::with_prefix("BRANCHDASHBOARD").separator("_"));
+
+    let cwd_file_path = Path::new("./config.json5");
+    if cwd_file_path.exists() {
+        config_builder = config_builder.add_source(config::File::from(cwd_file_path));
+    }
+
+    let docker_file_path = Path::new("/app/config.json5");
+    if docker_file_path.exists() {
+        config_builder = config_builder.add_source(config::File::from(docker_file_path));
+    }
+
+    let config = config_builder
         .build()
         .context("Could not load configuration.")?;
 

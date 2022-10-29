@@ -2,3 +2,5 @@ target/
 **/.idea
 **/*.iml
 branch-dashboard*.zip
+docker/static
+docker/branch-dashboard

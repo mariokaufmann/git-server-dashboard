@@ -1,0 +1,13 @@
+services:
+  branch-dashboard:
+    container_name: branch-dashboard
+    image: branch-dashboard:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - type: bind
+        source: ./config.json5
+        target: /app/config.json5
+    environment:
+      BRANCHDASHBOARD_BITBUCKET_PASSWORD: YOUR_BITBUCKET_PASSWORD
+      BRANCHDASHBOARD_GITLAB_TOKEN: YOUR_GITLAB_TOKEN
