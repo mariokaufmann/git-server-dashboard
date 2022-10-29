@@ -1,0 +1,15 @@
+{
+  port: 8080,
+  verbose: false,
+  repositories: [
+    "PROJECT/my-repo-1",
+    "PROJECT/my-repo-2"
+  ],
+  bitbucket: {
+    url: "https://bitbucket.example.com",
+    user: "your.user@email.com"
+  },
+  gitlab: {
+    url: "https://gitlab.example.com",
+  }
+}

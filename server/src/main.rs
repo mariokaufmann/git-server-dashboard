@@ -23,7 +23,7 @@ type LockableCache = Arc<tokio::sync::Mutex<DashboardDataCache>>;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let configuration = config::load_configuration_from_environment()
+    let configuration = config::load_configuration()
         .context("Could not load configuration from file or environment.")?;
     logger::init_logger(configuration.verbose);
 
