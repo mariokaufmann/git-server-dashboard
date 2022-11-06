@@ -10,3 +10,5 @@ if (Test-Path .\branch-dashboard-windows.zip) {
 New-Item -ItemType Directory -Path .\target | Out-Null
 Copy-Item .\server\target\release\branch-dashboard.exe target\
 Copy-Item .\ui\dist target\static -Recurse
+
+Compress-Archive -Path target\* -DestinationPath branch-dashboard-windows.zip
