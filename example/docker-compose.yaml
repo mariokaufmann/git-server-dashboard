@@ -1,7 +1,7 @@
 services:
   branch-dashboard:
     container_name: branch-dashboard
-    image: branch-dashboard:latest
+    image: mariokaufmann/branch-dashboard:latest
     ports:
       - 8080:8080
     volumes:
