@@ -27,6 +27,6 @@ impl Repository {
 
 impl Display for Repository {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}/{}", self.name, self.group)
+        write!(f, "{}/{}", self.group, self.name)
     }
 }

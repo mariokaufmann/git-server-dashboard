@@ -1,7 +1,6 @@
 use crate::data::bitbucket::model::{
     BitbucketBuildState, BranchResponse, BuildStatusResponse, PaginatedResponse,
-    PullRequestCommentsResponse, PullRequestDetails, PullRequestResponse, RepositoryResponse,
-    UserResponse,
+    PullRequestResponse, RepositoryResponse, UserResponse,
 };
 use crate::data::bitbucket::BitbucketClient;
 use crate::data::model::{
@@ -54,13 +53,13 @@ pub async fn load_dashboard_data(
         let pull_requests = get_pull_requests(client, repository).await?;
 
         for pull_request in &pull_requests {
-            let commit_id = pull_request.details_response.from_ref.latest_commit.clone();
+            let commit_id = pull_request.from_ref.latest_commit.clone();
             if build_status_map.get(&commit_id).is_none() {
                 let build_status = get_build_status(client, &commit_id).await?;
                 build_status_map.insert(commit_id, build_status);
             }
 
-            let user_slug = pull_request.details_response.author.user.slug.clone();
+            let user_slug = pull_request.author.user.slug.clone();
             if user_map.get(&user_slug).is_none() {
                 let user = get_user(client, &user_slug).await?;
                 user_map.insert(user_slug, user);
@@ -115,7 +114,7 @@ async fn get_branches(
 async fn get_pull_requests(
     client: &BitbucketClient,
     repository: &Repository,
-) -> anyhow::Result<Vec<PullRequestDetails>> {
+) -> anyhow::Result<Vec<PullRequestResponse>> {
     let pull_request_url = get_repo_sub_url(repository, "pull-requests");
     let pull_request_response: PaginatedResponse<PullRequestResponse> =
         client.request(&pull_request_url).await.with_context(|| {
@@ -125,24 +124,7 @@ async fn get_pull_requests(
             )
         })?;
 
-    let mut pull_request_details = Vec::new();
-    for pull_request in pull_request_response.values.into_iter() {
-        let comments_url = get_repo_sub_url(
-            repository,
-            &format!("pull-requests/{}/blocker-comments", pull_request.id),
-        );
-        let comments_response: PaginatedResponse<PullRequestCommentsResponse> = client
-            .request(&comments_url)
-            .await
-            .with_context(|| format!("Could not load comments for repository: {}", repository))?;
-        let pull_request_detail = PullRequestDetails {
-            details_response: pull_request,
-            comments_count: comments_response.values.len() as u32,
-        };
-        pull_request_details.push(pull_request_detail);
-    }
-
-    Ok(pull_request_details)
+    Ok(pull_request_response.values)
 }
 
 async fn get_user(client: &BitbucketClient, user_slug: &str) -> anyhow::Result<UserResponse> {
@@ -171,7 +153,7 @@ fn map_repository_data(
     bitbucket_url: &str,
     mut repository: RepositoryResponse,
     branches: Vec<BranchResponse>,
-    pull_requests: Vec<PullRequestDetails>,
+    pull_requests: Vec<PullRequestResponse>,
     users: &HashMap<String, UserResponse>,
     build_statuses: &HashMap<String, Option<BuildStatusResponse>>,
 ) -> anyhow::Result<RepositoryBranchData> {
@@ -183,7 +165,7 @@ fn map_repository_data(
 
     let pull_request_target_branch_names: HashSet<&String> = pull_requests
         .iter()
-        .map(|pull_request| &pull_request.details_response.to_ref.display_id)
+        .map(|pull_request| &pull_request.to_ref.display_id)
         .collect();
 
     let pull_request_target_branches: Vec<PullRequestTargetBranch> =
@@ -192,32 +174,27 @@ fn map_repository_data(
             .map(|name| {
                 let mapped_pull_requests = pull_requests
                     .iter()
-                    .filter(|pr| pr.details_response.to_ref.display_id.eq(*name))
+                    .filter(|pr| pr.to_ref.display_id.eq(*name))
                     .map(|pr| {
-                        let source_commit = &pr.details_response.from_ref.latest_commit;
+                        let source_commit = &pr.from_ref.latest_commit;
                         let build_status = build_statuses.get(source_commit).ok_or_else(|| {
                             anyhow!(
                                 "Did not find cached build status for commit {} and branch {}.",
                                 source_commit,
-                                pr.details_response.from_ref.display_id
+                                pr.from_ref.display_id
                             )
                         })?;
-                        let author_slug = &pr.details_response.author.user.slug;
+                        let author_slug = &pr.author.user.slug;
                         let author = users.get(author_slug).ok_or_else(|| {
                             anyhow!("Did not find cached user for slug {}.", author_slug)
                         })?;
-                        let approved = pr
-                            .details_response
-                            .reviewers
-                            .iter()
-                            .any(|reviewer| reviewer.approved);
+                        let approved = pr.reviewers.iter().any(|reviewer| reviewer.approved);
 
-                        let last_updated_date =
-                            Utc.timestamp_millis(pr.details_response.updated_date as i64);
+                        let last_updated_date = Utc.timestamp_millis(pr.updated_date as i64);
                         let formatted_last_updated_date =
                             last_updated_date.format("%+").to_string();
                         let link_response =
-                            pr.details_response.links.self_link.first().ok_or_else(|| {
+                            pr.links.self_link.first().ok_or_else(|| {
                                 anyhow!("Did not find self link for pull request.")
                             })?;
 
@@ -227,11 +204,11 @@ fn map_repository_data(
                         }
 
                         Ok(PullRequest {
-                            branch_name: pr.details_response.from_ref.display_id.to_owned(),
-                            user_name: pr.details_response.author.user.display_name.to_owned(),
+                            branch_name: pr.from_ref.display_id.to_owned(),
+                            user_name: pr.author.user.display_name.to_owned(),
                             pipeline_status: map_pipeline_status(build_status),
                             pipeline_url: build_status.as_ref().map(|status| status.url.to_owned()),
-                            comment_count: pr.comments_count,
+                            comment_count: pr.properties.comment_count.unwrap_or(0),
                             approved,
                             user_profile_image: avatar_url,
                             last_activity_date: formatted_last_updated_date,
@@ -274,11 +251,8 @@ fn map_repository_data(
         .iter()
         .filter(|branch| {
             !pull_requests.iter().any(|pr| {
-                pr.details_response
-                    .from_ref
-                    .display_id
-                    .eq(&branch.display_id)
-                    || pr.details_response.to_ref.display_id.eq(&branch.display_id)
+                pr.from_ref.display_id.eq(&branch.display_id)
+                    || pr.to_ref.display_id.eq(&branch.display_id)
             })
         })
         .map(|branch| {

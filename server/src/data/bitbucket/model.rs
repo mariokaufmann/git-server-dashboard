@@ -1,10 +1,5 @@
 use serde_derive::Deserialize;
 
-pub struct PullRequestDetails {
-    pub details_response: PullRequestResponse,
-    pub comments_count: u32,
-}
-
 #[derive(Deserialize)]
 pub struct PaginatedResponse<T> {
     pub values: Vec<T>,
@@ -40,6 +35,14 @@ pub struct PullRequestResponse {
     // epoch time in millis
     pub updated_date: u64,
     pub links: LinksResponse,
+    // this property is not officially documented but presumably used by the Bitbucket UI
+    pub properties: PullRequestPropertiesResponse,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PullRequestPropertiesResponse {
+    pub comment_count: Option<u32>,
 }
 
 #[derive(Deserialize)]
@@ -61,11 +64,6 @@ pub struct PullRequestUserResponse {
 pub struct PullRequestUserDetailsResponse {
     pub display_name: String,
     pub slug: String,
-}
-
-#[derive(Deserialize)]
-pub struct PullRequestCommentsResponse {
-    // at the moment we just need the number of comments
 }
 
 #[derive(Deserialize)]
