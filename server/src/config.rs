@@ -53,7 +53,5 @@ pub fn load_configuration() -> anyhow::Result<Configuration> {
         .try_deserialize()
         .context("Could not read configuration.")?;
 
-    println!("Read configuration values: {:?}", configuration);
-
     Ok(configuration)
 }
