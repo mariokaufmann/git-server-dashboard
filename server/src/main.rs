@@ -66,15 +66,19 @@ async fn keep_loading_data(
     loop {
         match reload_receiver.recv().await {
             Some(()) => {
-                let locked_cache = cache.lock().await;
+                let mut locked_cache = cache.lock().await;
                 let should_reload = locked_cache.should_reload();
-                drop(locked_cache);
                 if should_reload {
                     info!("Reloading dashboard data.");
+                    locked_cache.set_refreshing(true);
+                }
+                drop(locked_cache);
+                if should_reload {
                     match data_loader.load_data().await {
                         Ok(data) => {
                             let mut locked_cache = cache.lock().await;
                             locked_cache.cache_data(data);
+                            locked_cache.set_refreshing(false);
                             drop(locked_cache);
                         }
                         Err(err) => {

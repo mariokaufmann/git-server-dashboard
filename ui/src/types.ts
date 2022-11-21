@@ -1,6 +1,7 @@
 export interface DashboardData {
   last_updated_date?: string;
   repositories: RepositoryBranchData[];
+  currently_refreshing: boolean;
 }
 
 export interface RepositoryBranchData {

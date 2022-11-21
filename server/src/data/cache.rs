@@ -15,6 +15,7 @@ impl DashboardDataCache {
         let dashboard_data = DashboardData {
             last_updated_date: None,
             repositories: vec![],
+            currently_refreshing: false,
         };
 
         Self {
@@ -30,6 +31,10 @@ impl DashboardDataCache {
 
     pub fn get_cached_data(&mut self) -> DashboardData {
         self.dashboard_data.clone()
+    }
+
+    pub fn set_refreshing(&mut self, refreshing: bool) {
+        self.dashboard_data.currently_refreshing = refreshing;
     }
 
     pub fn should_reload(&self) -> bool {
