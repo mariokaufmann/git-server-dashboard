@@ -4,6 +4,7 @@
   import dayjs from "dayjs";
   import type { DashboardData, RepositoryBranchData } from "./types";
   import { onDestroy } from "svelte";
+  import Loader from "./lib/Loader.svelte";
 
   let dashboardData: DashboardData;
   let timeout = null;
@@ -15,6 +16,7 @@
         repositories: data.repositories.sort(
           (rep1, rep2) => estimateLineCount(rep2) - estimateLineCount(rep1)
         ),
+        currently_refreshing: data.currently_refreshing,
       };
     });
     timeout = setTimeout(reloadData, 2_000);
@@ -74,6 +76,9 @@
     {:else}
       <p>Data not loaded yet</p>
     {/if}
+    {#if dashboardData.currently_refreshing}
+      <Loader />
+    {/if}
   </div>
   <main>
     {#each dashboardData.repositories as repository}
@@ -108,13 +113,14 @@
 
   .header {
     display: flex;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     justify-content: flex-end;
     width: 100%;
   }
 
   .header p {
-    margin: 0;
+    margin: 0 0.5rem;
     font-size: 0.8em;
+    height: 1rem;
   }
 </style>

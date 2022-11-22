@@ -70,6 +70,7 @@ impl GitlabClient {
         Ok(DashboardData {
             last_updated_date: Some(last_updated_date),
             repositories,
+            currently_refreshing: false,
         })
     }
 }

@@ -81,6 +81,7 @@ pub async fn load_dashboard_data(
     Ok(DashboardData {
         last_updated_date: Some(last_updated_date),
         repositories: repository_branch_datas,
+        currently_refreshing: false,
     })
 }
 

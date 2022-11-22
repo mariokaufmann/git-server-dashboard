@@ -3,6 +3,7 @@ use serde_derive::Serialize;
 #[derive(Serialize, Clone)]
 pub struct DashboardData {
     pub last_updated_date: Option<String>,
+    pub currently_refreshing: bool,
     pub repositories: Vec<RepositoryBranchData>,
 }
 
