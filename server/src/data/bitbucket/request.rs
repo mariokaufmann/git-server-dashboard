@@ -191,7 +191,10 @@ fn map_repository_data(
                         })?;
                         let approved = pr.reviewers.iter().any(|reviewer| reviewer.approved);
 
-                        let last_updated_date = Utc.timestamp_millis(pr.updated_date as i64);
+                        let last_updated_date = Utc
+                            .timestamp_millis_opt(pr.updated_date as i64)
+                            .single()
+                            .ok_or_else(|| anyhow!("Could not parse milliseconds PR timestamp."))?;
                         let formatted_last_updated_date =
                             last_updated_date.format("%+").to_string();
                         let link_response =
