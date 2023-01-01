@@ -4,5 +4,13 @@
     "group:allNonMajor",
     "group:recommended",
     "schedule:monthly"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "svelte"
+      ],
+      "groupName": "Svelte"
+    }
   ]
 }
