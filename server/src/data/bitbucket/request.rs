@@ -91,9 +91,7 @@ async fn get_repository(
 ) -> anyhow::Result<RepositoryResponse> {
     let url = get_repo_sub_url(repository, "");
     let response = client.request(&url).await.with_context(|| {
-        format!(
-            "Could not load repository details for repository: {repository}"
-        )
+        format!("Could not load repository details for repository: {repository}")
     })?;
     Ok(response)
 }
@@ -116,12 +114,10 @@ async fn get_pull_requests(
     repository: &Repository,
 ) -> anyhow::Result<Vec<PullRequestResponse>> {
     let pull_request_url = get_repo_sub_url(repository, "pull-requests");
-    let pull_request_response: PaginatedResponse<PullRequestResponse> =
-        client.request(&pull_request_url).await.with_context(|| {
-            format!(
-                "Could not load pull requests for repository: {repository}"
-            )
-        })?;
+    let pull_request_response: PaginatedResponse<PullRequestResponse> = client
+        .request(&pull_request_url)
+        .await
+        .with_context(|| format!("Could not load pull requests for repository: {repository}"))?;
 
     Ok(pull_request_response.values)
 }

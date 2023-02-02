@@ -200,9 +200,7 @@ fn map_repository_data(
                 let target_branch_details = branches
                     .iter()
                     .find(|branch| branch.details_response.name.eq(*name))
-                    .with_context(|| {
-                        format!("Could not find branch details for branch {name}.")
-                    })?;
+                    .with_context(|| format!("Could not find branch details for branch {name}."))?;
                 Ok(PullRequestTargetBranch {
                     branch_name: name.to_string(),
                     pipeline_status: map_pipeline_status(&target_branch_details.pipeline_response),
