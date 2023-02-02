@@ -33,7 +33,7 @@ pub fn get_router(
     let middleware_stack = ServiceBuilder::new().layer(HandleErrorLayer::new(|error| async move {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Unhandled internal error: {}", error),
+            format!("Unhandled internal error: {error}"),
         )
     }));
 

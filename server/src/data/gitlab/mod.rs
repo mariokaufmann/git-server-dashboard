@@ -62,7 +62,7 @@ impl GitlabClient {
         for repository in &self.repositories {
             let repository_data = load_repository_data(self, repository)
                 .await
-                .with_context(|| format!("Could not load data for repository {}.", repository))?;
+                .with_context(|| format!("Could not load data for repository {repository}."))?;
             repositories.push(repository_data);
         }
 
