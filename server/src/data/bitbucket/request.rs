@@ -20,11 +20,11 @@ fn get_repo_sub_url(repository: &Repository, suffix: &str) -> String {
 }
 
 fn get_build_status_url(commit_id: &str) -> String {
-    format!("build-status/1.0/commits/{}", commit_id)
+    format!("build-status/1.0/commits/{commit_id}")
 }
 
 fn get_user_url(user_slug: &str) -> String {
-    format!("api/1.0/users/{}?avatarSize=32", user_slug)
+    format!("api/1.0/users/{user_slug}?avatarSize=32")
 }
 
 pub async fn load_dashboard_data(
@@ -92,8 +92,7 @@ async fn get_repository(
     let url = get_repo_sub_url(repository, "");
     let response = client.request(&url).await.with_context(|| {
         format!(
-            "Could not load repository details for repository: {}",
-            repository
+            "Could not load repository details for repository: {repository}"
         )
     })?;
     Ok(response)
@@ -107,7 +106,7 @@ async fn get_branches(
     let response: PaginatedResponse<BranchResponse> = client
         .request(&url)
         .await
-        .with_context(|| format!("Could not load branches for repository: {}", repository))?;
+        .with_context(|| format!("Could not load branches for repository: {repository}"))?;
 
     Ok(response.values)
 }
@@ -120,8 +119,7 @@ async fn get_pull_requests(
     let pull_request_response: PaginatedResponse<PullRequestResponse> =
         client.request(&pull_request_url).await.with_context(|| {
             format!(
-                "Could not load pull requests for repository: {}",
-                repository
+                "Could not load pull requests for repository: {repository}"
             )
         })?;
 
@@ -133,7 +131,7 @@ async fn get_user(client: &BitbucketClient, user_slug: &str) -> anyhow::Result<U
     let response = client
         .request(&url)
         .await
-        .with_context(|| format!("Could not load user with slug: {}", user_slug))?;
+        .with_context(|| format!("Could not load user with slug: {user_slug}"))?;
     Ok(response)
 }
 
@@ -145,7 +143,7 @@ async fn get_build_status(
     let response: PaginatedResponse<BuildStatusResponse> = client
         .request(&url)
         .await
-        .with_context(|| format!("Could not load build status for commit {}.", commit_id))?;
+        .with_context(|| format!("Could not load build status for commit {commit_id}."))?;
     let build_status = response.values.into_iter().last();
     Ok(build_status)
 }
@@ -204,7 +202,7 @@ fn map_repository_data(
 
                         let mut avatar_url = author.avatar_url.to_owned();
                         if avatar_url.starts_with('/') {
-                            avatar_url = format!("{}{}", bitbucket_url, avatar_url);
+                            avatar_url = format!("{bitbucket_url}{avatar_url}");
                         }
 
                         Ok(PullRequest {
@@ -226,7 +224,7 @@ fn map_repository_data(
                     .iter()
                     .find(|branch| branch.display_id.eq(*name))
                     .with_context(|| {
-                        format!("Could not find branch response for branch {}.", name)
+                        format!("Could not find branch response for branch {name}.")
                     })?;
 
                 let target_branch_commit = &target_branch_response.latest_commit;

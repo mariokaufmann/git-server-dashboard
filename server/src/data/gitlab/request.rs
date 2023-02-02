@@ -40,7 +40,7 @@ async fn get_project(
     client
         .request(&encoded_project_id)
         .await
-        .with_context(|| format!("Could not load project details for project {}.", repository))
+        .with_context(|| format!("Could not load project details for project {repository}."))
 }
 
 async fn get_merge_requests(
@@ -201,7 +201,7 @@ fn map_repository_data(
                     .iter()
                     .find(|branch| branch.details_response.name.eq(*name))
                     .with_context(|| {
-                        format!("Could not find branch details for branch {}.", name)
+                        format!("Could not find branch details for branch {name}.")
                     })?;
                 Ok(PullRequestTargetBranch {
                     branch_name: name.to_string(),
