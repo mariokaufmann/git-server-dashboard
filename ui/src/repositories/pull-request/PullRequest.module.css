@@ -1,0 +1,34 @@
+.pr {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0 0.25rem 0.75rem;
+}
+
+.pr > :global(*:not(:first-child)) {
+  margin-left: 0.5rem;
+}
+
+.prMetadata {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0 0.25rem 1rem;
+}
+
+.prMetadata > :global(*:not(:first-child)) {
+  margin-left: 0.5rem;
+}
+
+.branchName {
+  overflow-wrap: anywhere;
+}
+
+img {
+  width: 22px;
+  border-radius: 50%;
+  border: solid 2px white;
+}
+
+.detail {
+  display: inline-block;
+  font-size: 0.8rem;
+}

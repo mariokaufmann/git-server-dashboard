@@ -1,0 +1,22 @@
+.icon {
+  padding: 2px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.iconSuccessful {
+  color: var(--color-green);
+}
+
+.iconFailed {
+  color: var(--color-fiery-rose);
+}
+
+.iconRunning {
+  color: var(--color-blue-jeans);
+}
+
+.iconDefault {
+  color: var(--color-text);
+}
