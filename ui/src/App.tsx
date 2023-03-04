@@ -31,7 +31,7 @@ const App: Component = () => {
   const [dashboardData, { mutate, refetch }] = createResource(getDashboardData);
   let timeout: number | undefined = undefined;
   const reloadData = () => {
-    // refetch();
+    refetch();
     timeout = setTimeout(reloadData, RELOAD_INTERVAL_MS);
   };
   timeout = setTimeout(reloadData, RELOAD_INTERVAL_MS);
