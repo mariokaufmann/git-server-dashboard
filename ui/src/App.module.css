@@ -1,0 +1,33 @@
+main {
+  margin: 0 1rem;
+  display: grid;
+  grid-gap: 1rem;
+  color: var(--color-text);
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-auto-flow: dense;
+}
+
+.tileLarge {
+  grid-row: span 3;
+}
+
+.tileMedium {
+  grid-row: span 2;
+}
+
+.tileSmall {
+  grid-row: span 1;
+}
+
+.header {
+  display: flex;
+  padding: 0.5rem 1rem;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.header p {
+  margin: 0 0.5rem;
+  font-size: 0.8em;
+  height: 1rem;
+}

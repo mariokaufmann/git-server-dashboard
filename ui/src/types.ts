@@ -37,9 +37,9 @@ export interface StandaloneBranch {
 }
 
 export type PipelineStatus =
-  | "Running"
-  | "Successful"
-  | "Failed"
-  | "None"
-  | "Canceled"
-  | "Queued";
+  | 'Running'
+  | 'Successful'
+  | 'Failed'
+  | 'None'
+  | 'Canceled'
+  | 'Queued';
