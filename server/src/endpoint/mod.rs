@@ -1,12 +1,18 @@
-use axum::extract::Extension;
+use axum::extract::{Extension, State};
 use axum::response::IntoResponse;
 use axum::Json;
 use log::warn;
+use sea_orm::DatabaseConnection;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{LockableCache, DASHBOARD_VERSION};
 
 pub mod routes;
+
+#[derive(Clone)]
+struct AppState {
+    db_connection: DatabaseConnection,
+}
 
 async fn get_server_version() -> impl IntoResponse {
     DASHBOARD_VERSION
@@ -22,4 +28,8 @@ async fn get_dashboard_data(
         warn!("Could not send reload event: {}.", err);
     }
     Json(data)
+}
+
+async fn get_pr_updates(State(state): State<AppState>) -> impl IntoResponse {
+    "Hello!"
 }
