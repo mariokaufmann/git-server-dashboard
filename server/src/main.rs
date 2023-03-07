@@ -4,7 +4,6 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 use anyhow::Context;
-use entity::user;
 use log::{error, info, warn};
 use migration::{Migrator, MigratorTrait};
 use sea_orm::ActiveValue::Set;

@@ -7,10 +7,12 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{LockableCache, DASHBOARD_VERSION};
 
+mod prupdates;
 pub mod routes;
+mod webhook;
 
 #[derive(Clone)]
-struct AppState {
+pub struct AppState {
     db_connection: DatabaseConnection,
 }
 
@@ -28,8 +30,4 @@ async fn get_dashboard_data(
         warn!("Could not send reload event: {}.", err);
     }
     Json(data)
-}
-
-async fn get_pr_updates(State(state): State<AppState>) -> impl IntoResponse {
-    "Hello!"
 }

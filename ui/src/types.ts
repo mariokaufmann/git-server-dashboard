@@ -43,3 +43,18 @@ export type PipelineStatus =
   | 'None'
   | 'Canceled'
   | 'Queued';
+
+export interface PullRequestEvent {
+  id: number | null;
+  hash: number;
+  event_type: PullRequestEventType;
+  title: string;
+  text: string;
+}
+
+export type PullRequestEventType =
+  | 'Ignored'
+  | 'PROpened'
+  | 'PRApproved'
+  | 'PRMerged'
+  | 'PRCommentAdded';

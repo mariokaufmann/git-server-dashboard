@@ -41,7 +41,7 @@ impl DashboardDataCache {
         match self.last_load_instant {
             Some(last_load) => {
                 // check if data was loaded recently
-                if last_load.elapsed() > Duration::from_secs(30) {
+                if last_load.elapsed() > Duration::from_secs(300000) {
                     debug!("Reloading dashboard data.");
                     true
                 } else {

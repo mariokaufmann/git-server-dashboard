@@ -13,6 +13,8 @@ import Loader from './common/loader/Loader';
 import RepositoryCard from './repositories/repository-card/RepositoryCard';
 import { estimateLineCount } from './repositories/utils';
 import { getDashboardData } from './repositories/fetchDashboardData';
+import { getPRUpdates } from './repositories/fetchPRUpdates';
+import Card from './common/card/Card';
 
 function mapTileSizeClass(repository: RepositoryBranchData) {
   const approximateLineCount = estimateLineCount(repository);
@@ -29,9 +31,10 @@ const RELOAD_INTERVAL_MS = 2_000;
 
 const App: Component = () => {
   const [dashboardData, { mutate, refetch }] = createResource(getDashboardData);
+  const [prUpdates] = createResource(getPRUpdates);
   let timeout: number | undefined = undefined;
   const reloadData = () => {
-    refetch();
+    // refetch();
     timeout = setTimeout(reloadData, RELOAD_INTERVAL_MS);
   };
   timeout = setTimeout(reloadData, RELOAD_INTERVAL_MS);
@@ -68,14 +71,28 @@ const App: Component = () => {
               )}
               {dashboardData.currently_refreshing && <Loader />}
             </div>
+
             <main>
-              <For each={dashboardData.repositories}>
-                {(repository) => (
-                  <div class={mapTileSizeClass(repository)}>
-                    <RepositoryCard repositoryBranchData={repository} />
-                  </div>
-                )}
-              </For>
+              <div class={styles.repositorySection}>
+                <div class={styles.repositories}>
+                  <For each={dashboardData.repositories}>
+                    {(repository) => (
+                      <div class={mapTileSizeClass(repository)}>
+                        <RepositoryCard repositoryBranchData={repository} />
+                      </div>
+                    )}
+                  </For>
+                </div>
+              </div>
+              <div class={styles.prUpdates}>
+                <For each={prUpdates()}>
+                  {(prUpdate) => (
+                    <Card>
+                      <h2>{prUpdate.title}</h2>
+                    </Card>
+                  )}
+                </For>
+              </div>
             </main>
           </>
         )}

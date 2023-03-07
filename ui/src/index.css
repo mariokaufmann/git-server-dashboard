@@ -13,7 +13,7 @@
 html {
   background-color: #002e73;
   font-size: 18px;
-  color: white;
+  color: var(--color-text);
 }
 
 a {

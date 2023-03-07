@@ -18,7 +18,19 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
+                    .col(
+                        ColumnDef::new(PullRequestEvent::Hash)
+                            .big_unsigned()
+                            .big_unsigned()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(PullRequestEvent::EventType)
+                            .text()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(PullRequestEvent::Title).string().not_null())
+                    .col(ColumnDef::new(PullRequestEvent::Text).string().not_null())
                     .to_owned(),
             )
             .await
@@ -35,5 +47,8 @@ impl MigrationTrait for Migration {
 enum PullRequestEvent {
     Table,
     Id,
+    Hash,
+    EventType,
     Title,
+    Text,
 }

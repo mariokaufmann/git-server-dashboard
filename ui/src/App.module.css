@@ -1,8 +1,16 @@
 main {
+  display: flex;
+}
+
+.repositorySection {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+}
+
+.repositories {
   margin: 0 1rem;
   display: grid;
   grid-gap: 1rem;
-  color: var(--color-text);
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   grid-auto-flow: dense;
 }
@@ -19,14 +27,18 @@ main {
   grid-row: span 1;
 }
 
+.prUpdates {
+  flex-basis: 500px;
+}
+
 .header {
   display: flex;
-  padding: 0.5rem 1rem;
   justify-content: flex-end;
   width: 100%;
 }
 
 .header p {
+  color: white;
   margin: 0 0.5rem;
   font-size: 0.8em;
   height: 1rem;

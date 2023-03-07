@@ -6,7 +6,9 @@ use sea_orm::DatabaseConnection;
 use tokio::sync::mpsc::UnboundedSender;
 use tower::ServiceBuilder;
 
-use crate::endpoint::{get_dashboard_data, get_pr_updates, get_server_version, AppState};
+use crate::endpoint::prupdates::get_pr_updates;
+use crate::endpoint::webhook::post_webhook_bitbucket;
+use crate::endpoint::{get_dashboard_data, get_server_version, AppState};
 use crate::LockableCache;
 
 pub fn get_router(
@@ -21,6 +23,10 @@ pub fn get_router(
         .route(
             "/api/dashboard-data",
             axum::routing::get(get_dashboard_data),
+        )
+        .route(
+            "/webhook/bitbucket",
+            axum::routing::post(post_webhook_bitbucket),
         )
         .route("/api/pr-updates", axum::routing::get(get_pr_updates))
         .layer(axum::extract::Extension(cache))

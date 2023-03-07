@@ -3,12 +3,13 @@ import styles from './RepositoryCard.module.css';
 import { RepositoryBranchData } from '../../types';
 import PullRequestTargetBranch from '../pull-request-target-branch/PullRequestTargetBranch';
 import GitBranch from '../git-branch/GitBranch';
+import Card from '../../common/card/Card';
 
 const RepositoryCard: Component<{
   repositoryBranchData: RepositoryBranchData;
 }> = (props) => {
   return (
-    <div class={styles.card}>
+    <Card>
       <a href={props.repositoryBranchData.repository_url} target="_blank">
         <h2>{props.repositoryBranchData.repository_name}</h2>
       </a>
@@ -28,7 +29,7 @@ const RepositoryCard: Component<{
           )}
         </For>
       </div>
-    </div>
+    </Card>
   );
 };
 export default RepositoryCard;
