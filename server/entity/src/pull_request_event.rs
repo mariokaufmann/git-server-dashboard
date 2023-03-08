@@ -7,6 +7,9 @@ pub struct Model {
     pub id: i32,
     pub hash: i64,
     pub event_type: String,
+    pub author: String,
+    pub date: String,
+    pub repository: String,
     pub title: String,
     pub text: String,
 }

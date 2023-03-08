@@ -29,6 +29,13 @@ impl MigrationTrait for Migration {
                             .text()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(PullRequestEvent::Author).string().not_null())
+                    .col(ColumnDef::new(PullRequestEvent::Date).string().not_null())
+                    .col(
+                        ColumnDef::new(PullRequestEvent::Repository)
+                            .string()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(PullRequestEvent::Title).string().not_null())
                     .col(ColumnDef::new(PullRequestEvent::Text).string().not_null())
                     .to_owned(),
@@ -49,6 +56,9 @@ enum PullRequestEvent {
     Id,
     Hash,
     EventType,
+    Author,
+    Date,
+    Repository,
     Title,
     Text,
 }

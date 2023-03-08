@@ -1,14 +1,15 @@
 use crate::endpoint::webhook::db::save_event;
 use crate::endpoint::webhook::model::{
-    EventType, PullRequestEvent, PullRequestEventType, PullRequestOpenedPayload,
+    CommonPullRequestEventPayload, EventType, PullRequestEvent, PullRequestEventType,
+    PullRequestPayload,
 };
 use crate::endpoint::AppState;
-use anyhow::{anyhow, Context};
+use anyhow::Context;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
-use log::{error, info};
+use log::error;
 use sea_orm::DatabaseConnection;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -55,23 +56,35 @@ async fn parse_webhook_body(
 }
 
 fn handle_pr_opened_payload(value: serde_json::Value) -> anyhow::Result<PullRequestEvent> {
-    let payload = serde_json::from_value::<PullRequestOpenedPayload>(value)
-        .context("Could not parse pr:opened event from payload.")?;
-
-    let mut hasher = DefaultHasher::new();
-    payload.pull_request.hash(&mut hasher);
-    let pr_hash = hasher.finish();
+    let payload = parse_common_payload_event(value)?;
+    let pr_hash = hash_pull_request(&payload.pull_request);
 
     let pull_request_event = PullRequestEvent {
         id: None,
         event_type: PullRequestEventType::PROpened,
         // TODO fix this
         hash: pr_hash as i64,
+        author: payload.actor.display_name,
+        date: payload.date,
+        repository: payload.pull_request.from_ref.repository.name,
         title: payload.pull_request.title,
         text: "".to_string(),
     };
 
     Ok(pull_request_event)
+}
+
+fn hash_pull_request(pull_request: &PullRequestPayload) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    pull_request.hash(&mut hasher);
+    hasher.finish()
+}
+
+fn parse_common_payload_event(
+    value: serde_json::Value,
+) -> anyhow::Result<CommonPullRequestEventPayload> {
+    serde_json::from_value::<CommonPullRequestEventPayload>(value)
+        .context("Could not parse common pull request event payload.")
 }
 
 fn map_event_key(event_key: &str) -> EventType {

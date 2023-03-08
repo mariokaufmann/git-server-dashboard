@@ -48,6 +48,9 @@ export interface PullRequestEvent {
   id: number | null;
   hash: number;
   event_type: PullRequestEventType;
+  author: string;
+  date: string;
+  repository: string;
   title: string;
   text: string;
 }

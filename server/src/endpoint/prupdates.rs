@@ -26,6 +26,9 @@ pub async fn get_pr_updates(State(mut state): State<AppState>) -> impl IntoRespo
                         id: Some(model.id),
                         hash: model.hash,
                         event_type,
+                        author: model.author,
+                        date: model.date,
+                        repository: model.repository,
                         title: model.title,
                         text: model.text,
                     })
@@ -68,6 +71,9 @@ pub struct PullRequestEvent {
     pub id: Option<i32>,
     pub hash: i64,
     pub event_type: PullRequestEventType,
+    pub author: String,
+    pub date: String,
+    pub repository: String,
     pub title: String,
     pub text: String,
 }

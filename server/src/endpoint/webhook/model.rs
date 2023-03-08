@@ -15,8 +15,11 @@ pub struct PullRequestEvent {
     pub id: Option<i32>,
     pub hash: i64,
     pub event_type: PullRequestEventType,
+    pub author: String,
     pub title: String,
+    pub repository: String,
     pub text: String,
+    pub date: String,
 }
 
 pub(super) enum EventType {
@@ -64,6 +67,7 @@ pub(super) struct GitRefPayload {
 #[derive(Deserialize)]
 pub(super) struct GitRepositoryPayload {
     pub id: u32,
+    pub name: String,
     pub project: GitProjectPayload,
 }
 
@@ -74,7 +78,8 @@ pub(super) struct GitProjectPayload {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub(super) struct PullRequestOpenedPayload {
+pub(super) struct CommonPullRequestEventPayload {
+    pub date: String,
     pub actor: ActorPayload,
     pub pull_request: PullRequestPayload,
 }

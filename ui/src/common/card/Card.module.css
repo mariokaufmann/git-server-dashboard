@@ -1,6 +1,4 @@
 .Card {
-  width: 100%;
-  height: 100%;
   background: radial-gradient(50% 50% at 50% 50%, #e8eaef 0%, #e5e5fc 100%);
   border-radius: 5px;
   padding: 1rem;

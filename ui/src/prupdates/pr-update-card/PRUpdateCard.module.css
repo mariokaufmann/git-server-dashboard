@@ -1,0 +1,24 @@
+.content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.textContent {
+  flex-grow: 1;
+}
+
+.textContent h3 {
+  margin-bottom: 0.5rem;
+}
+
+.close i {
+  cursor: pointer;
+  /* increase click target */
+  padding: 1rem;
+  margin: -1rem;
+}
+
+.detail {
+  font-size: 0.8rem;
+  margin-right: 1rem;
+}

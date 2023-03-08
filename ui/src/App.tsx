@@ -14,7 +14,7 @@ import RepositoryCard from './repositories/repository-card/RepositoryCard';
 import { estimateLineCount } from './repositories/utils';
 import { getDashboardData } from './repositories/fetchDashboardData';
 import { getPRUpdates } from './repositories/fetchPRUpdates';
-import Card from './common/card/Card';
+import PRUpdateCard from './prupdates/pr-update-card/PRUpdateCard';
 
 function mapTileSizeClass(repository: RepositoryBranchData) {
   const approximateLineCount = estimateLineCount(repository);
@@ -72,8 +72,11 @@ const App: Component = () => {
               {dashboardData.currently_refreshing && <Loader />}
             </div>
 
-            <main>
+            <main class={styles.main}>
               <div class={styles.repositorySection}>
+                <div class={styles.sectionTitle}>
+                  <h2>Repositories</h2>
+                </div>
                 <div class={styles.repositories}>
                   <For each={dashboardData.repositories}>
                     {(repository) => (
@@ -84,14 +87,21 @@ const App: Component = () => {
                   </For>
                 </div>
               </div>
-              <div class={styles.prUpdates}>
-                <For each={prUpdates()}>
-                  {(prUpdate) => (
-                    <Card>
-                      <h2>{prUpdate.title}</h2>
-                    </Card>
-                  )}
-                </For>
+              <div class={styles.prUpdatesSection}>
+                <div class={styles.sectionTitle}>
+                  <h2>PR Updates</h2>
+                  <span>
+                    <p>Close all</p>
+                    <i class="fa-solid fa-xmark" title="Close"></i>
+                  </span>
+                </div>
+                <div class={styles.prUpdates}>
+                  <For each={prUpdates()}>
+                    {(prUpdate) => (
+                      <PRUpdateCard prUpdate={prUpdate}></PRUpdateCard>
+                    )}
+                  </For>
+                </div>
               </div>
             </main>
           </>
