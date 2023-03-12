@@ -4,10 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [".", "entity", "migration"]
+members = [".", "migration"]
 
 [dependencies]
-entity = { path = "entity" }
 migration = { path = "migration" } # depends on your needs
 
 axum = "0.6.10"

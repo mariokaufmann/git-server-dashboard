@@ -410,7 +410,6 @@ dependencies = [
  "axum-server",
  "chrono",
  "config",
- "entity",
  "log",
  "log4rs",
  "migration",
@@ -662,13 +661,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7896dc8abb250ffdda33912550faa54c88ec8b998dec0b2c55ab224921ce11df"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "entity"
-version = "0.1.0"
-dependencies = [
- "sea-orm",
 ]
 
 [[package]]
