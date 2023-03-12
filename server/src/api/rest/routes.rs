@@ -31,7 +31,7 @@ pub fn get_router(
             "/webhook/bitbucket",
             axum::routing::post(post_webhook_bitbucket),
         )
-        .route("/api/pr-updates", axum::routing::get(get_pr_updates))
+        .route("/api/pr-updates", axum::routing::post(get_pr_updates))
         .layer(axum::extract::Extension(cache))
         .layer(axum::extract::Extension(reload_sender))
         .with_state(state);

@@ -1,4 +1,8 @@
+use chrono::{DateTime, Utc};
 use serde_derive::Serialize;
+
+pub type PullRequestId = i64;
+pub type PullRequestEventTimestamp = DateTime<Utc>;
 
 #[derive(Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString)]
 pub enum PullRequestEventType {
@@ -12,11 +16,11 @@ pub enum PullRequestEventType {
 #[derive(Serialize)]
 pub struct PullRequestEvent {
     pub id: Option<i32>,
-    pub hash: i64,
+    pub pr_id: PullRequestId,
     pub event_type: PullRequestEventType,
     pub author: String,
     pub title: String,
     pub repository: String,
     pub text: String,
-    pub date: String,
+    pub timestamp: PullRequestEventTimestamp,
 }

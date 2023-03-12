@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(
-                        ColumnDef::new(PullRequestEvent::Hash)
+                        ColumnDef::new(PullRequestEvent::PrId)
                             .big_unsigned()
                             .big_unsigned()
                             .not_null(),
@@ -30,7 +30,11 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(PullRequestEvent::Author).string().not_null())
-                    .col(ColumnDef::new(PullRequestEvent::Date).string().not_null())
+                    .col(
+                        ColumnDef::new(PullRequestEvent::Timestamp)
+                            .string()
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(PullRequestEvent::Repository)
                             .string()
@@ -54,10 +58,10 @@ impl MigrationTrait for Migration {
 enum PullRequestEvent {
     Table,
     Id,
-    Hash,
+    PrId,
     EventType,
     Author,
-    Date,
+    Timestamp,
     Repository,
     Title,
     Text,

@@ -1,5 +1,6 @@
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use std::str::FromStr;
 
 use anyhow::Context;
 use axum::extract::State;
@@ -10,7 +11,9 @@ use log::error;
 
 use crate::api::rest::AppServicesState;
 use crate::api::webhook::model::{CommonPullRequestEventPayload, EventType, PullRequestPayload};
-use crate::service::prupdates::model::{PullRequestEvent, PullRequestEventType};
+use crate::service::prupdates::model::{
+    PullRequestEvent, PullRequestEventTimestamp, PullRequestEventType,
+};
 use crate::service::prupdates::pr_event_service::PullRequestUpdateService;
 
 mod model;
@@ -54,15 +57,18 @@ async fn parse_webhook_body(
 
 fn handle_pr_opened_payload(value: serde_json::Value) -> anyhow::Result<PullRequestEvent> {
     let payload = parse_common_payload_event(value)?;
-    let pr_hash = hash_pull_request(&payload.pull_request);
+    let pr_id = hash_pull_request(&payload.pull_request);
+
+    let timestamp = PullRequestEventTimestamp::from_str(&payload.date)
+        .context("Could not parse timestamp to UTC date.")?;
 
     let pull_request_event = PullRequestEvent {
         id: None,
         event_type: PullRequestEventType::PROpened,
         // TODO fix this
-        hash: pr_hash as i64,
+        pr_id: pr_id as i64,
         author: payload.actor.display_name,
-        date: payload.date,
+        timestamp,
         repository: payload.pull_request.from_ref.repository.name,
         title: payload.pull_request.title,
         text: "".to_string(),
