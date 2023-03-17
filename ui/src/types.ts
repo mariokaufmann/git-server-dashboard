@@ -46,13 +46,22 @@ export type PipelineStatus =
 
 export interface PullRequestEvent {
   id: number | null;
-  hash: number;
+  pr_id: number;
   event_type: PullRequestEventType;
   author: string;
-  date: string;
-  repository: string;
   title: string;
+  timestamp: string;
+  repository: string;
   text: string;
+}
+
+export interface GetPullRequestUpdatesPayload {
+  pull_requests_last_seen: PullRequestLastSeenPayload[],
+}
+
+export interface PullRequestLastSeenPayload {
+  pr_id: number,
+   last_seen_timestamp: string
 }
 
 export type PullRequestEventType =

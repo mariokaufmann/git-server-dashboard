@@ -14,7 +14,7 @@ const PRUpdateCard: Component<{ prUpdate: PullRequestEvent }> = (props) => {
           {props.prUpdate.text.length > 0 && <p>{props.prUpdate.text}</p>}
           <span class={styles.detail}>{props.prUpdate.author}</span>
           <span class={styles.detail} title="Last updated">
-            {dayjs(props.prUpdate.date).fromNow()}
+            {dayjs(props.prUpdate.timestamp).fromNow()}
           </span>
         </div>
         <div class={styles.close}>

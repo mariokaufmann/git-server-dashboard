@@ -40,13 +40,11 @@ pub async fn get_pr_updates(
 }
 
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct GetPullRequestUpdatesPayload {
     pub pull_requests_last_seen: Vec<PullRequestLastSeenPayload>,
 }
 
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct PullRequestLastSeenPayload {
     pub pr_id: i64,
     pub last_seen_timestamp: DateTime<Utc>,
