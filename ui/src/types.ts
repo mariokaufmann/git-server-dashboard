@@ -46,10 +46,10 @@ export type PipelineStatus =
 
 export type PullRequestUpdateType =
   | 'Aggregated'
-  | 'PROpened'
-  | 'PRApproved'
-  | 'PRMerged'
-  | 'PRCommentAdded';
+  | 'Opened'
+  | 'Approved'
+  | 'Merged'
+  | 'CommentAdded';
 
 export interface PullRequestUpdate {
   pr_id: string;

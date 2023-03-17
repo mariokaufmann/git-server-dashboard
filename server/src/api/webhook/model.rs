@@ -2,14 +2,12 @@ use std::hash::{Hash, Hasher};
 
 use serde::Deserialize;
 
-pub(super) enum EventType {
-    PROpened,
-    PRApproved,
-    PRMerged,
-    PRCommentAdded,
+pub(super) enum PREventType {
+    Opened,
+    Approved,
+    Merged,
+    CommentAdded,
 }
-
-type EpochDateMillis = u64;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -22,9 +20,9 @@ pub(super) struct ActorPayload {
 pub(super) struct PullRequestPayload {
     pub id: u32,
     pub title: String,
-    // TODO use this
+    // TODO use this (implement cleanup)
+    #[allow(unused)]
     pub open: bool,
-    pub updated_date: EpochDateMillis,
     pub from_ref: GitRefPayload,
     pub to_ref: GitRefPayload,
 }
@@ -59,7 +57,6 @@ pub(super) struct GitProjectPayload {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(super) struct CommonPullRequestEventPayload {
-    pub date: String,
     pub actor: ActorPayload,
     pub pull_request: PullRequestPayload,
 }

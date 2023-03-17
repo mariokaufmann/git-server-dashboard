@@ -1,6 +1,5 @@
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
-use std::str::FromStr;
 
 use anyhow::Context;
 use axum::extract::State;
@@ -12,11 +11,9 @@ use serde::de::DeserializeOwned;
 
 use crate::api::rest::AppServicesState;
 use crate::api::webhook::model::{
-    CommonPullRequestEventPayload, EventType, PullRequestCommentEventPayload, PullRequestPayload,
+    CommonPullRequestEventPayload, PREventType, PullRequestCommentEventPayload, PullRequestPayload,
 };
-use crate::service::prupdates::model::{
-    PullRequestEvent, PullRequestEventType, PullRequestTimestamp,
-};
+use crate::service::prupdates::model::{PullRequestEvent, PullRequestEventType};
 use crate::service::prupdates::pr_event_service::PullRequestUpdateService;
 
 mod model;
@@ -27,7 +24,7 @@ pub async fn post_webhook_bitbucket(
     Json(payload): Json<serde_json::Value>,
 ) -> impl IntoResponse {
     match process_webhook_request(payload, &state.pr_update_service).await {
-        Ok(()) => (StatusCode::OK, "Hello Bitbucket!"),
+        Ok(()) => (StatusCode::OK, ""),
         Err(err) => {
             error!("Could not process webhook from Bitbucket: {:#}", err);
             (StatusCode::BAD_REQUEST, "Could not parse request body.")
@@ -61,7 +58,7 @@ async fn process_webhook_request(
 
 // TODO parse pr link and link it in frontend
 fn parse_pr_event_payload(
-    event_type: EventType,
+    event_type: PREventType,
     value: serde_json::Value,
 ) -> anyhow::Result<PullRequestEvent> {
     let text = get_event_text(&event_type, &value).context("Could not map PR event text.")?;
@@ -86,21 +83,21 @@ fn parse_pr_event_payload(
     Ok(pull_request_event)
 }
 
-fn map_event_type(event_type: &EventType) -> PullRequestEventType {
+fn map_event_type(event_type: &PREventType) -> PullRequestEventType {
     match event_type {
-        EventType::PROpened => PullRequestEventType::PROpened,
-        EventType::PRApproved => PullRequestEventType::PRApproved,
-        EventType::PRMerged => PullRequestEventType::PRMerged,
-        EventType::PRCommentAdded => PullRequestEventType::PRCommentAdded,
+        PREventType::Opened => PullRequestEventType::Opened,
+        PREventType::Approved => PullRequestEventType::Approved,
+        PREventType::Merged => PullRequestEventType::Merged,
+        PREventType::CommentAdded => PullRequestEventType::CommentAdded,
     }
 }
 
-fn get_event_text(event_type: &EventType, value: &serde_json::Value) -> anyhow::Result<String> {
+fn get_event_text(event_type: &PREventType, value: &serde_json::Value) -> anyhow::Result<String> {
     match event_type {
-        EventType::PROpened => Ok("".to_string()),
-        EventType::PRApproved => Ok("".to_string()),
-        EventType::PRMerged => Ok("".to_string()),
-        EventType::PRCommentAdded => {
+        PREventType::Opened => Ok("".to_string()),
+        PREventType::Approved => Ok("".to_string()),
+        PREventType::Merged => Ok("".to_string()),
+        PREventType::CommentAdded => {
             let payload = parse_event_payload::<PullRequestCommentEventPayload>(value.clone())
                 .context("Could not parse PR event comment payload.")?;
             Ok(payload.comment.text)
@@ -118,12 +115,12 @@ fn parse_event_payload<T: DeserializeOwned>(value: serde_json::Value) -> anyhow:
     serde_json::from_value::<T>(value).context("Could not parse pull request event payload.")
 }
 
-fn map_event_key(event_key: &str) -> Option<EventType> {
+fn map_event_key(event_key: &str) -> Option<PREventType> {
     match event_key {
-        "pr:opened" => Some(EventType::PROpened),
-        "pr:approved" => Some(EventType::PRApproved),
-        "pr:merged" => Some(EventType::PRMerged),
-        "pr:comment:added" => Some(EventType::PRCommentAdded),
+        "pr:opened" => Some(PREventType::Opened),
+        "pr:approved" => Some(PREventType::Approved),
+        "pr:merged" => Some(PREventType::Merged),
+        "pr:comment:added" => Some(PREventType::CommentAdded),
         _ => None,
     }
 }

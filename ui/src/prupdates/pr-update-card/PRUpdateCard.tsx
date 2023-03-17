@@ -6,10 +6,10 @@ import { PullRequestUpdate, PullRequestUpdateType } from '../../types';
 
 // TODO use fa-code-commit for new commits
 const updateIconMaps: { [key in PullRequestUpdateType]: string } = {
-  PRApproved: 'fa-thumbs-up',
-  PRCommentAdded: 'fa-comment',
-  PRMerged: 'fa-code-merge',
-  PROpened: 'fa-code-branch',
+  Approved: 'fa-thumbs-up',
+  CommentAdded: 'fa-comment',
+  Merged: 'fa-code-merge',
+  Opened: 'fa-code-branch',
   Aggregated: 'fa-layer-group',
 };
 

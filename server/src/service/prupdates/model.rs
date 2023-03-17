@@ -7,10 +7,10 @@ pub type PullRequestTimestamp = DateTime<Utc>;
     Clone, Copy, Eq, Hash, PartialEq, Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString,
 )]
 pub enum PullRequestEventType {
-    PROpened,
-    PRApproved,
-    PRMerged,
-    PRCommentAdded,
+    Opened,
+    Approved,
+    Merged,
+    CommentAdded,
 }
 
 #[derive(Serialize)]
@@ -28,10 +28,10 @@ pub struct PullRequestEvent {
 #[derive(Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString)]
 pub enum PullRequestUpdateType {
     Aggregated,
-    PROpened,
-    PRApproved,
-    PRMerged,
-    PRCommentAdded,
+    Opened,
+    Approved,
+    Merged,
+    CommentAdded,
 }
 
 #[derive(Serialize)]

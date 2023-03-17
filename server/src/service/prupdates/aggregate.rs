@@ -34,7 +34,7 @@ fn get_update_details(events: &[PullRequestEvent]) -> Vec<String> {
     events.iter().for_each(|evt| {
         grouped_events
             .entry(evt.event_type)
-            .or_insert_with(|| Vec::new())
+            .or_insert_with(Vec::new)
             .push(evt);
     });
 
@@ -49,13 +49,13 @@ fn get_update_detail_for_event_type(
     events: &[&PullRequestEvent],
 ) -> String {
     match event_type {
-        PullRequestEventType::PROpened => "PR opened".to_string(),
-        PullRequestEventType::PRApproved => match events.len() {
+        PullRequestEventType::Opened => "PR opened".to_string(),
+        PullRequestEventType::Approved => match events.len() {
             1 => "PR approved".to_string(),
             _ => format!("{} approvals on PR", events.len()),
         },
-        PullRequestEventType::PRMerged => "PR merged".to_string(),
-        PullRequestEventType::PRCommentAdded => match events.len() {
+        PullRequestEventType::Merged => "PR merged".to_string(),
+        PullRequestEventType::CommentAdded => match events.len() {
             1 => "New comment on PR".to_string(),
             _ => format!("{} new comments on PR", events.len()),
         },
@@ -64,9 +64,9 @@ fn get_update_detail_for_event_type(
 
 fn map_event_type(&event_type: &PullRequestEventType) -> PullRequestUpdateType {
     match event_type {
-        PullRequestEventType::PROpened => PullRequestUpdateType::PROpened,
-        PullRequestEventType::PRApproved => PullRequestUpdateType::PRApproved,
-        PullRequestEventType::PRMerged => PullRequestUpdateType::PRMerged,
-        PullRequestEventType::PRCommentAdded => PullRequestUpdateType::PRCommentAdded,
+        PullRequestEventType::Opened => PullRequestUpdateType::Opened,
+        PullRequestEventType::Approved => PullRequestUpdateType::Approved,
+        PullRequestEventType::Merged => PullRequestUpdateType::Merged,
+        PullRequestEventType::CommentAdded => PullRequestUpdateType::CommentAdded,
     }
 }
