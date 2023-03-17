@@ -1,7 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde_derive::Serialize;
 
-pub type PullRequestId = i64;
 pub type PullRequestTimestamp = DateTime<Utc>;
 
 #[derive(
@@ -17,7 +16,7 @@ pub enum PullRequestEventType {
 #[derive(Serialize)]
 pub struct PullRequestEvent {
     pub id: Option<i32>,
-    pub pr_id: PullRequestId,
+    pub pr_id: String,
     pub event_type: PullRequestEventType,
     pub author: String,
     pub title: String,
@@ -37,7 +36,7 @@ pub enum PullRequestUpdateType {
 
 #[derive(Serialize)]
 pub struct PullRequestUpdate {
-    pub pr_id: PullRequestId,
+    pub pr_id: String,
     pub update_type: PullRequestUpdateType,
     pub author: String,
     pub title: String,

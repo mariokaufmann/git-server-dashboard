@@ -1,11 +1,11 @@
 use crate::service::prupdates::model::{
-    PullRequestEvent, PullRequestEventType, PullRequestId, PullRequestUpdate, PullRequestUpdateType,
+    PullRequestEvent, PullRequestEventType, PullRequestUpdate, PullRequestUpdateType,
 };
 use anyhow::Context;
 use std::collections::HashMap;
 
 pub fn aggregate_events(
-    pr_id: PullRequestId,
+    pr_id: String,
     mut events: Vec<PullRequestEvent>,
 ) -> anyhow::Result<PullRequestUpdate> {
     events.sort_by_key(|a| a.timestamp);

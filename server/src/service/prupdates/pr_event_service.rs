@@ -1,6 +1,6 @@
 use crate::adapter::db::prupdates::PullRequestEventRepository;
 use crate::service::prupdates::aggregate::aggregate_events;
-use crate::service::prupdates::model::{PullRequestEvent, PullRequestId, PullRequestUpdate};
+use crate::service::prupdates::model::{PullRequestEvent, PullRequestUpdate};
 use anyhow::Context;
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
@@ -23,11 +23,11 @@ impl PullRequestUpdateService {
 
     pub async fn get_pr_updates(
         &self,
-        last_seen_timestamps: HashMap<PullRequestId, DateTime<Utc>>,
+        last_seen_timestamps: HashMap<String, DateTime<Utc>>,
     ) -> anyhow::Result<Vec<PullRequestUpdate>> {
         let events = self.pr_event_repository.get_events().await?;
 
-        let mut grouped_events: HashMap<PullRequestId, Vec<PullRequestEvent>> = HashMap::new();
+        let mut grouped_events: HashMap<String, Vec<PullRequestEvent>> = HashMap::new();
         events
             .into_iter()
             .filter(|event| match last_seen_timestamps.get(&event.pr_id) {
@@ -36,7 +36,7 @@ impl PullRequestUpdateService {
             })
             .for_each(|event| {
                 grouped_events
-                    .entry(event.pr_id)
+                    .entry(event.pr_id.clone())
                     .or_insert_with(|| Vec::new())
                     .push(event)
             });

@@ -18,12 +18,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(
-                        ColumnDef::new(PullRequestEvent::PrId)
-                            .big_unsigned()
-                            .big_unsigned()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(PullRequestEvent::PrId).text().not_null())
                     .col(
                         ColumnDef::new(PullRequestEvent::EventType)
                             .text()

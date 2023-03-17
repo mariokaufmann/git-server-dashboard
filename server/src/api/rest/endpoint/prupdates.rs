@@ -10,7 +10,7 @@ use serde_json::json;
 use std::collections::HashMap;
 
 use crate::api::rest::AppServicesState;
-use crate::service::prupdates::model::{PullRequestId, PullRequestTimestamp};
+use crate::service::prupdates::model::PullRequestTimestamp;
 
 pub async fn get_pr_updates(
     State(state): State<AppServicesState>,
@@ -20,7 +20,7 @@ pub async fn get_pr_updates(
         .pull_requests_last_seen
         .into_iter()
         .map(|mapping| (mapping.pr_id, mapping.last_seen_timestamp))
-        .collect::<HashMap<PullRequestId, PullRequestTimestamp>>();
+        .collect::<HashMap<String, PullRequestTimestamp>>();
 
     match state
         .pr_update_service
@@ -46,6 +46,6 @@ pub struct GetPullRequestUpdatesPayload {
 
 #[derive(Deserialize)]
 pub struct PullRequestLastSeenPayload {
-    pub pr_id: i64,
+    pub pr_id: String,
     pub last_seen_timestamp: DateTime<Utc>,
 }

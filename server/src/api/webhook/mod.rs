@@ -59,6 +59,7 @@ async fn process_webhook_request(
     }
 }
 
+// TODO parse pr link and link it in frontend
 fn parse_pr_event_payload(
     event_type: EventType,
     value: serde_json::Value,
@@ -67,16 +68,14 @@ fn parse_pr_event_payload(
     let payload = parse_event_payload::<CommonPullRequestEventPayload>(value)?;
     let pr_id = hash_pull_request(&payload.pull_request);
 
-    let timestamp = PullRequestTimestamp::from_str(&payload.date)
-        .context("Could not parse timestamp to UTC date.")?;
+    let timestamp = chrono::offset::Utc::now();
 
     // TODO also parse author of change if possible (who commented? who approved?)
 
     let pull_request_event = PullRequestEvent {
         id: None,
         event_type: map_event_type(&event_type),
-        // TODO fix this
-        pr_id: pr_id as i64,
+        pr_id: pr_id.to_string(),
         author: payload.actor.display_name,
         timestamp,
         repository: payload.pull_request.from_ref.repository.name,

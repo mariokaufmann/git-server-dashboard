@@ -1,6 +1,7 @@
 import {
   Component,
   createResource,
+  createSignal,
   For,
   onCleanup,
   onMount,
@@ -15,6 +16,11 @@ import { estimateLineCount } from './repositories/utils';
 import { getDashboardData } from './repositories/fetchDashboardData';
 import { getPRUpdates } from './repositories/fetchPRUpdates';
 import PRUpdateCard from './prupdates/pr-update-card/PRUpdateCard';
+import { getPullRequestUpdatesLastSeen } from './prupdates/last-seen/storage';
+import {
+  markAllUpdatesAsLastSeenNow,
+  markUpdateAsLastSeenNow,
+} from './prupdates/last-seen/last-seen';
 
 function mapTileSizeClass(repository: RepositoryBranchData) {
   const approximateLineCount = estimateLineCount(repository);
@@ -31,7 +37,10 @@ const RELOAD_INTERVAL_MS = 2_000;
 
 const App: Component = () => {
   const [dashboardData, { mutate, refetch }] = createResource(getDashboardData);
-  const [prUpdates] = createResource(getPRUpdates);
+  const [prUpdatesLastSeen, setPrUpdatesLastSeen] = createSignal(
+    getPullRequestUpdatesLastSeen()
+  );
+  const [prUpdates] = createResource(prUpdatesLastSeen, getPRUpdates);
   let timeout: number | undefined = undefined;
   const reloadData = () => {
     // refetch();
@@ -90,7 +99,12 @@ const App: Component = () => {
               <div class={styles.prUpdatesSection}>
                 <div class={styles.sectionTitle}>
                   <h2>PR Updates</h2>
-                  <span>
+                  <span
+                    onClick={() => {
+                      markAllUpdatesAsLastSeenNow(prUpdates());
+                      setPrUpdatesLastSeen(getPullRequestUpdatesLastSeen());
+                    }}
+                  >
                     <p>Close all</p>
                     <i class="fa-solid fa-xmark" title="Close"></i>
                   </span>
@@ -98,7 +112,13 @@ const App: Component = () => {
                 <div class={styles.prUpdates}>
                   <For each={prUpdates()}>
                     {(prUpdate) => (
-                      <PRUpdateCard prUpdate={prUpdate}></PRUpdateCard>
+                      <PRUpdateCard
+                        prUpdate={prUpdate}
+                        markAsLastSeenNow={() => {
+                          markUpdateAsLastSeenNow(prUpdate);
+                          setPrUpdatesLastSeen(getPullRequestUpdatesLastSeen());
+                        }}
+                      ></PRUpdateCard>
                     )}
                   </For>
                 </div>

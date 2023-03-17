@@ -9,11 +9,14 @@ const updateIconMaps: { [key in PullRequestUpdateType]: string } = {
   PRApproved: 'fa-thumbs-up',
   PRCommentAdded: 'fa-comment',
   PRMerged: 'fa-code-merge',
-  PROpened: 'fa-code-pull-request',
+  PROpened: 'fa-code-branch',
   Aggregated: 'fa-layer-group',
 };
 
-const PRUpdateCard: Component<{ prUpdate: PullRequestUpdate }> = (props) => {
+const PRUpdateCard: Component<{
+  prUpdate: PullRequestUpdate;
+  markAsLastSeenNow: () => void;
+}> = (props) => {
   return (
     <Card>
       <div class={styles.content}>
@@ -32,9 +35,6 @@ const PRUpdateCard: Component<{ prUpdate: PullRequestUpdate }> = (props) => {
           <p>{props.prUpdate.title}</p>
           <div class={styles.details}>
             <div class={styles.detailsText}>
-              {props.prUpdate.details.length === 1 && (
-                <p>props.prUpdate.details[0]</p>
-              )}
               {props.prUpdate.details.length > 0 && (
                 <ul>
                   <For each={props.prUpdate.details}>
@@ -52,7 +52,11 @@ const PRUpdateCard: Component<{ prUpdate: PullRequestUpdate }> = (props) => {
           </div>
         </div>
         <div class={styles.close}>
-          <i class="fa-solid fa-xmark" title="Close"></i>
+          <i
+            class="fa-solid fa-xmark"
+            title="Close"
+            onClick={() => props.markAsLastSeenNow()}
+          ></i>
         </div>
       </div>
     </Card>

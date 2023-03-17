@@ -52,7 +52,7 @@ export type PullRequestUpdateType =
   | 'PRCommentAdded';
 
 export interface PullRequestUpdate {
-  pr_id: number;
+  pr_id: string;
   update_type: PullRequestUpdateType;
   author: string;
   title: string;
@@ -66,6 +66,6 @@ export interface GetPullRequestUpdatesPayload {
 }
 
 export interface PullRequestLastSeenPayload {
-  pr_id: number;
+  pr_id: string;
   last_seen_timestamp: string;
 }
