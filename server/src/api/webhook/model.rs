@@ -3,7 +3,6 @@ use std::hash::{Hash, Hasher};
 use serde::Deserialize;
 
 pub(super) enum EventType {
-    Ignored,
     PROpened,
     PRApproved,
     PRMerged,
@@ -63,4 +62,14 @@ pub(super) struct CommonPullRequestEventPayload {
     pub date: String,
     pub actor: ActorPayload,
     pub pull_request: PullRequestPayload,
+}
+
+#[derive(Deserialize)]
+pub(super) struct PullRequestCommentEventPayload {
+    pub comment: PullRequestCommentPayload,
+}
+
+#[derive(Deserialize)]
+pub(super) struct PullRequestCommentPayload {
+    pub text: String,
 }

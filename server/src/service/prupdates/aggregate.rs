@@ -14,8 +14,8 @@ pub fn aggregate_events(
     let last_event = events.last().context("Could not get last event.")?;
 
     let update_type = match events.len() {
-        1 => PullRequestUpdateType::Aggregated,
-        _ => map_event_type(&last_event.event_type),
+        1 => map_event_type(&last_event.event_type),
+        _ => PullRequestUpdateType::Aggregated,
     };
 
     Ok(PullRequestUpdate {
@@ -34,7 +34,8 @@ fn get_update_details(events: &[PullRequestEvent]) -> Vec<String> {
     events.iter().for_each(|evt| {
         grouped_events
             .entry(evt.event_type)
-            .or_insert_with(|| Vec::new());
+            .or_insert_with(|| Vec::new())
+            .push(evt);
     });
 
     grouped_events

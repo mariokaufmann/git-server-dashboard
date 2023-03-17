@@ -18,11 +18,17 @@
   margin: -1rem;
 }
 
-.detail {
-  font-size: 0.8rem;
+.title {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
 }
 
 .footer {
   display: flex;
   justify-content: space-between;
+}
+
+.footer span {
+  font-size: 0.8rem;
 }
