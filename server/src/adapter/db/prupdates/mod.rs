@@ -1,13 +1,12 @@
 use std::str::FromStr;
 
 use anyhow::{anyhow, Context};
-use chrono::format::Fixed::TimezoneName;
-use chrono::{DateTime, Utc};
+use chrono::DateTime;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, NotSet};
 
 use crate::service::prupdates::model::{
-    PullRequestEvent, PullRequestEventTimestamp, PullRequestEventType,
+    PullRequestEvent, PullRequestEventType, PullRequestTimestamp,
 };
 
 mod pull_request_event;
@@ -58,7 +57,7 @@ impl PullRequestEventRepository {
                     pr_id: model.pr_id,
                     event_type,
                     author: model.author,
-                    timestamp: PullRequestEventTimestamp::from(event_timestamp),
+                    timestamp: PullRequestTimestamp::from(event_timestamp),
                     repository: model.repository,
                     title: model.title,
                     text: model.text,

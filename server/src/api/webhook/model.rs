@@ -23,6 +23,7 @@ pub(super) struct ActorPayload {
 pub(super) struct PullRequestPayload {
     pub id: u32,
     pub title: String,
+    // TODO use this
     pub open: bool,
     pub updated_date: EpochDateMillis,
     pub from_ref: GitRefPayload,

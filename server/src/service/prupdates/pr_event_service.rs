@@ -1,8 +1,8 @@
 use crate::adapter::db::prupdates::PullRequestEventRepository;
-use crate::service::prupdates::model::{PullRequestEvent, PullRequestId};
+use crate::service::prupdates::aggregate::aggregate_events;
+use crate::service::prupdates::model::{PullRequestEvent, PullRequestId, PullRequestUpdate};
+use anyhow::Context;
 use chrono::{DateTime, Utc};
-use log::info;
-use serde::de::Unexpected::Map;
 use std::collections::HashMap;
 
 #[derive(Clone)]
@@ -24,17 +24,29 @@ impl PullRequestUpdateService {
     pub async fn get_pr_updates(
         &self,
         last_seen_timestamps: HashMap<PullRequestId, DateTime<Utc>>,
-    ) -> anyhow::Result<Vec<PullRequestEvent>> {
+    ) -> anyhow::Result<Vec<PullRequestUpdate>> {
         let events = self.pr_event_repository.get_events().await?;
 
-        let filtered_events = events
+        let mut grouped_events: HashMap<PullRequestId, Vec<PullRequestEvent>> = HashMap::new();
+        events
             .into_iter()
             .filter(|event| match last_seen_timestamps.get(&event.pr_id) {
                 Some(timestamp) => event.timestamp.gt(timestamp),
                 None => true,
             })
-            .collect();
+            .for_each(|event| {
+                grouped_events
+                    .entry(event.pr_id)
+                    .or_insert_with(|| Vec::new())
+                    .push(event)
+            });
 
-        Ok(filtered_events)
+        let updates = grouped_events
+            .into_iter()
+            .map(|(pr_id, evts)| aggregate_events(pr_id, evts))
+            .collect::<anyhow::Result<Vec<PullRequestUpdate>>>()
+            .context("Could not aggregate events into update.")?;
+
+        Ok(updates)
     }
 }

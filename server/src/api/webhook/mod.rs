@@ -12,7 +12,7 @@ use log::error;
 use crate::api::rest::AppServicesState;
 use crate::api::webhook::model::{CommonPullRequestEventPayload, EventType, PullRequestPayload};
 use crate::service::prupdates::model::{
-    PullRequestEvent, PullRequestEventTimestamp, PullRequestEventType,
+    PullRequestEvent, PullRequestEventType, PullRequestTimestamp,
 };
 use crate::service::prupdates::pr_event_service::PullRequestUpdateService;
 
@@ -59,8 +59,10 @@ fn handle_pr_opened_payload(value: serde_json::Value) -> anyhow::Result<PullRequ
     let payload = parse_common_payload_event(value)?;
     let pr_id = hash_pull_request(&payload.pull_request);
 
-    let timestamp = PullRequestEventTimestamp::from_str(&payload.date)
+    let timestamp = PullRequestTimestamp::from_str(&payload.date)
         .context("Could not parse timestamp to UTC date.")?;
+
+    // TODO also parse author of change if possible (who commented? who approved?)
 
     let pull_request_event = PullRequestEvent {
         id: None,

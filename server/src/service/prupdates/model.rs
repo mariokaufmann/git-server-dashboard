@@ -2,11 +2,12 @@ use chrono::{DateTime, Utc};
 use serde_derive::Serialize;
 
 pub type PullRequestId = i64;
-pub type PullRequestEventTimestamp = DateTime<Utc>;
+pub type PullRequestTimestamp = DateTime<Utc>;
 
-#[derive(Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString)]
+#[derive(
+    Clone, Copy, Eq, Hash, PartialEq, Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString,
+)]
 pub enum PullRequestEventType {
-    Ignored,
     PROpened,
     PRApproved,
     PRMerged,
@@ -22,5 +23,25 @@ pub struct PullRequestEvent {
     pub title: String,
     pub repository: String,
     pub text: String,
-    pub timestamp: PullRequestEventTimestamp,
+    pub timestamp: PullRequestTimestamp,
+}
+
+#[derive(Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString)]
+pub enum PullRequestUpdateType {
+    Aggregated,
+    PROpened,
+    PRApproved,
+    PRMerged,
+    PRCommentAdded,
+}
+
+#[derive(Serialize)]
+pub struct PullRequestUpdate {
+    pub pr_id: PullRequestId,
+    pub update_type: PullRequestUpdateType,
+    pub author: String,
+    pub title: String,
+    pub repository: String,
+    pub details: Vec<String>,
+    pub timestamp: PullRequestTimestamp,
 }

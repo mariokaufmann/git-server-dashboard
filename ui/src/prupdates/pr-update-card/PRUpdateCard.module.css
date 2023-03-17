@@ -20,5 +20,9 @@
 
 .detail {
   font-size: 0.8rem;
-  margin-right: 1rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
 }

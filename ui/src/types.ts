@@ -44,29 +44,28 @@ export type PipelineStatus =
   | 'Canceled'
   | 'Queued';
 
-export interface PullRequestEvent {
-  id: number | null;
-  pr_id: number;
-  event_type: PullRequestEventType;
-  author: string;
-  title: string;
-  timestamp: string;
-  repository: string;
-  text: string;
-}
-
-export interface GetPullRequestUpdatesPayload {
-  pull_requests_last_seen: PullRequestLastSeenPayload[],
-}
-
-export interface PullRequestLastSeenPayload {
-  pr_id: number,
-   last_seen_timestamp: string
-}
-
-export type PullRequestEventType =
-  | 'Ignored'
+export type PullRequestUpdateType =
+  | 'Aggregated'
   | 'PROpened'
   | 'PRApproved'
   | 'PRMerged'
   | 'PRCommentAdded';
+
+export interface PullRequestUpdate {
+  pr_id: number;
+  update_type: PullRequestUpdateType;
+  author: string;
+  title: string;
+  timestamp: string;
+  repository: string;
+  details: string[];
+}
+
+export interface GetPullRequestUpdatesPayload {
+  pull_requests_last_seen: PullRequestLastSeenPayload[];
+}
+
+export interface PullRequestLastSeenPayload {
+  pr_id: number;
+  last_seen_timestamp: string;
+}
