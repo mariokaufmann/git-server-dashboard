@@ -7,6 +7,7 @@ pub(super) enum PREventType {
     Approved,
     Merged,
     CommentAdded,
+    SourceBranchUpdated,
 }
 
 #[derive(Deserialize)]

@@ -11,6 +11,7 @@ pub enum PullRequestEventType {
     Approved,
     Merged,
     CommentAdded,
+    SourceBranchUpdated,
 }
 
 #[derive(Serialize)]
@@ -32,6 +33,7 @@ pub enum PullRequestUpdateType {
     Approved,
     Merged,
     CommentAdded,
+    SourceBranchUpdated,
 }
 
 #[derive(Serialize)]

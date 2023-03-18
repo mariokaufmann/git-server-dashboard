@@ -89,6 +89,7 @@ fn map_event_type(event_type: &PREventType) -> PullRequestEventType {
         PREventType::Approved => PullRequestEventType::Approved,
         PREventType::Merged => PullRequestEventType::Merged,
         PREventType::CommentAdded => PullRequestEventType::CommentAdded,
+        PREventType::SourceBranchUpdated => PullRequestEventType::SourceBranchUpdated,
     }
 }
 
@@ -102,6 +103,7 @@ fn get_event_text(event_type: &PREventType, value: &serde_json::Value) -> anyhow
                 .context("Could not parse PR event comment payload.")?;
             Ok(payload.comment.text)
         }
+        PREventType::SourceBranchUpdated => Ok("".to_string()),
     }
 }
 
@@ -121,6 +123,7 @@ fn map_event_key(event_key: &str) -> Option<PREventType> {
         "pr:approved" => Some(PREventType::Approved),
         "pr:merged" => Some(PREventType::Merged),
         "pr:comment:added" => Some(PREventType::CommentAdded),
+        "pr:from_ref_updated" => Some(PREventType::SourceBranchUpdated),
         _ => None,
     }
 }

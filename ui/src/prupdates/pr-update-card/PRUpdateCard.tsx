@@ -4,13 +4,13 @@ import Card from '../../common/card/Card';
 import dayjs from 'dayjs';
 import { PullRequestUpdate, PullRequestUpdateType } from '../../types';
 
-// TODO use fa-code-commit for new commits
 const updateIconMaps: { [key in PullRequestUpdateType]: string } = {
   Approved: 'fa-thumbs-up',
   CommentAdded: 'fa-comment',
   Merged: 'fa-code-merge',
   Opened: 'fa-code-branch',
   Aggregated: 'fa-layer-group',
+  SourceBranchUpdated: 'fa-code-commit',
 };
 
 const PRUpdateCard: Component<{

@@ -49,7 +49,8 @@ export type PullRequestUpdateType =
   | 'Opened'
   | 'Approved'
   | 'Merged'
-  | 'CommentAdded';
+  | 'CommentAdded'
+  | 'SourceBranchUpdated';
 
 export interface PullRequestUpdate {
   pr_id: string;

@@ -59,6 +59,10 @@ fn get_update_detail_for_event_type(
             1 => "New comment on PR".to_string(),
             _ => format!("{} new comments on PR", events.len()),
         },
+        PullRequestEventType::SourceBranchUpdated => match events.len() {
+            1 => "New update on PR".to_string(),
+            _ => format!("{} new updates on PR", events.len()),
+        },
     }
 }
 
@@ -68,5 +72,6 @@ fn map_event_type(&event_type: &PullRequestEventType) -> PullRequestUpdateType {
         PullRequestEventType::Approved => PullRequestUpdateType::Approved,
         PullRequestEventType::Merged => PullRequestUpdateType::Merged,
         PullRequestEventType::CommentAdded => PullRequestUpdateType::CommentAdded,
+        PullRequestEventType::SourceBranchUpdated => PullRequestUpdateType::SourceBranchUpdated,
     }
 }

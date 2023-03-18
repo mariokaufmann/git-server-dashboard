@@ -4,8 +4,8 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 use anyhow::Context;
-use log::{error, info};
-use sea_orm::{Database, DatabaseConnection};
+use log::{error, info, LevelFilter};
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tokio::sync::mpsc::UnboundedSender;
 
 use migration::{Migrator, MigratorTrait};
@@ -32,9 +32,9 @@ async fn main() -> anyhow::Result<()> {
         .context("Could not load configuration from file or environment.")?;
     logger::init_logger(configuration.verbose);
 
-    let db_connection = Database::connect("sqlite:test.sqlite?mode=rwc")
-        .await
-        .unwrap();
+    let mut connect_options = ConnectOptions::new("sqlite:test.sqlite?mode=rwc".to_string());
+    connect_options.sqlx_logging_level(LevelFilter::Debug);
+    let db_connection = Database::connect(connect_options).await.unwrap();
 
     Migrator::up(&db_connection, None).await.unwrap();
 
