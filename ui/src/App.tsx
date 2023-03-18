@@ -126,6 +126,7 @@ const App: Component = () => {
                       ></PRUpdateCard>
                     )}
                   </For>
+                  {prUpdates()?.length === 0 && <p>No new PR updates</p>}
                 </div>
               </div>
             </main>

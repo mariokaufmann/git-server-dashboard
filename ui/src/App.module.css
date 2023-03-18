@@ -46,6 +46,10 @@
   padding: 0.5rem 1rem;
 }
 
+.prUpdates > p {
+  color: white;
+}
+
 .prUpdates {
   display: flex;
   flex-direction: column;
