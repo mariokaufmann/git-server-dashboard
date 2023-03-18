@@ -20,9 +20,6 @@ pub(super) struct ActorPayload {
 pub(super) struct PullRequestPayload {
     pub id: u32,
     pub title: String,
-    // TODO use this (implement cleanup)
-    #[allow(unused)]
-    pub open: bool,
     pub from_ref: GitRefPayload,
     pub to_ref: GitRefPayload,
 }

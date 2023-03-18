@@ -33,17 +33,22 @@ function mapTileSizeClass(repository: RepositoryBranchData) {
   }
 }
 
-const RELOAD_INTERVAL_MS = 2_000;
+const RELOAD_INTERVAL_MS = 5_000;
 
 const App: Component = () => {
-  const [dashboardData, { mutate, refetch }] = createResource(getDashboardData);
+  const [dashboardData, dashboardResourceActions] =
+    createResource(getDashboardData);
   const [prUpdatesLastSeen, setPrUpdatesLastSeen] = createSignal(
     getPullRequestUpdatesLastSeen()
   );
-  const [prUpdates] = createResource(prUpdatesLastSeen, getPRUpdates);
+  const [prUpdates, prUpdatesResourceActions] = createResource(
+    prUpdatesLastSeen,
+    getPRUpdates
+  );
   let timeout: number | undefined = undefined;
   const reloadData = () => {
-    // refetch();
+    prUpdatesResourceActions.refetch();
+    dashboardResourceActions.refetch();
     timeout = setTimeout(reloadData, RELOAD_INTERVAL_MS);
   };
   timeout = setTimeout(reloadData, RELOAD_INTERVAL_MS);
