@@ -6,7 +6,7 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
-use log::error;
+use log::{error, info};
 use serde::de::DeserializeOwned;
 
 use crate::api::rest::AppServicesState;
@@ -37,6 +37,13 @@ async fn process_webhook_request(
     pr_update_service: &PullRequestUpdateService,
 ) -> anyhow::Result<()> {
     let object = value.as_object().context("Payload was not an object.")?;
+
+    let test_key = object.get("test");
+    if test_key.is_some() {
+        info!("Received test webhook from bitbucket.");
+        return Ok(());
+    }
+
     let event_key = object
         .get("eventKey")
         .context("Could not find event key in Webhook payload.")?;
