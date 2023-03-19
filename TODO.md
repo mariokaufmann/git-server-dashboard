@@ -3,3 +3,4 @@
 - Handle webhook test message
 - Map PR link for PR updates
 - Write basic documentation / readme
+- check that all errors are logged with anyhow macro

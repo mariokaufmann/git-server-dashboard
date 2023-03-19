@@ -3,7 +3,7 @@ extern crate core;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use log::{error, info, LevelFilter};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tokio::sync::mpsc::UnboundedSender;
@@ -25,6 +25,8 @@ mod logger;
 mod service;
 
 const DASHBOARD_VERSION: &str = env!("CARGO_PKG_VERSION");
+const DATA_FOLDER: &str = "data";
+const DB_FILE_NAME: &str = "data.sqlite";
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -32,10 +34,10 @@ async fn main() -> anyhow::Result<()> {
         .context("Could not load configuration from file or environment.")?;
     logger::init_logger(configuration.verbose);
 
-    let mut connect_options = ConnectOptions::new("sqlite:test.sqlite?mode=rwc".to_string());
-    connect_options.sqlx_logging_level(LevelFilter::Debug);
-    let db_connection = Database::connect(connect_options).await.unwrap();
-
+    let db_connection = setup_db_connection()
+        .await
+        .context("Could not setup db connection.")?;
+    // migrate database schema
     Migrator::up(&db_connection, None).await.unwrap();
 
     let cache = Arc::new(tokio::sync::Mutex::new(RepositoriesDataCache::new()));
@@ -50,6 +52,20 @@ async fn main() -> anyhow::Result<()> {
     start_with_config(configuration.port, cache, db_connection, tx).await?;
 
     Ok(())
+}
+
+async fn setup_db_connection() -> anyhow::Result<DatabaseConnection> {
+    let mut dir = std::env::current_dir().context("Could not get working directory.")?;
+    dir.push(DATA_FOLDER);
+    std::fs::create_dir_all(dir).context("Could not create data folder.")?;
+    let mut connect_options = ConnectOptions::new(format!(
+        "sqlite:./{}/{}?mode=rwc",
+        DATA_FOLDER, DB_FILE_NAME
+    ));
+    connect_options.sqlx_logging_level(LevelFilter::Debug);
+    Database::connect(connect_options)
+        .await
+        .map_err(|err| anyhow!("Could not connect to sqlite db: {}", err))
 }
 
 async fn start_with_config(
