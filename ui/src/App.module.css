@@ -60,11 +60,11 @@
   display: flex;
   justify-content: flex-end;
   width: 100%;
+  padding: 0.25rem 0.5rem;
 }
 
 .header p {
   color: white;
-  margin: 0.25rem 0.5rem;
   font-size: 0.8em;
   height: 1rem;
 }

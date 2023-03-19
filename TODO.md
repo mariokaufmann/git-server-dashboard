@@ -1,6 +1,5 @@
 - PR Update: show comment text in UI
 - Load data from the backend using SSE
-- Handle webhook test message
 - Map PR link for PR updates
 - Write basic documentation / readme
 - Fix padding of loading spinner
