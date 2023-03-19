@@ -1,6 +1,4 @@
-FROM ubuntu:focal
-RUN apt update
-RUN apt install -y libssl-dev ca-certificates
+FROM ubuntu:jammy
 WORKDIR /app
 COPY branch-dashboard /app/
 COPY static /app/static
