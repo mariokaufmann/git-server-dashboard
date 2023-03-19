@@ -38,7 +38,12 @@ fn get_update_details(events: &[PullRequestEvent]) -> Vec<String> {
             .push(evt);
     });
 
-    grouped_events
+    // sort by event type to achieve a stable order of details
+    let mut map_entries: Vec<(PullRequestEventType, Vec<&PullRequestEvent>)> =
+        grouped_events.into_iter().collect();
+    map_entries.sort_by_key(|(event_type, _evts)| *event_type);
+
+    map_entries
         .into_iter()
         .map(|(event_type, evts)| get_update_detail_for_event_type(event_type, &evts))
         .collect()
@@ -73,5 +78,43 @@ fn map_event_type(&event_type: &PullRequestEventType) -> PullRequestUpdateType {
         PullRequestEventType::Merged => PullRequestUpdateType::Merged,
         PullRequestEventType::CommentAdded => PullRequestUpdateType::CommentAdded,
         PullRequestEventType::SourceBranchUpdated => PullRequestUpdateType::SourceBranchUpdated,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::service::prupdates::aggregate::get_update_details;
+    use crate::service::prupdates::model::{PullRequestEvent, PullRequestEventType};
+
+    fn get_pr_event(event_type: PullRequestEventType) -> PullRequestEvent {
+        PullRequestEvent {
+            id: Some(1),
+            repository: "repo1".to_string(),
+            pr_id: "pr_1".to_string(),
+            event_type,
+            timestamp: chrono::offset::Utc::now(),
+            author: "author1".to_string(),
+            text: "text".to_string(),
+            title: "title".to_string(),
+        }
+    }
+
+    #[test]
+    fn get_update_details_sorted() {
+        let events: Vec<PullRequestEvent> = vec![
+            get_pr_event(PullRequestEventType::SourceBranchUpdated),
+            get_pr_event(PullRequestEventType::CommentAdded),
+            get_pr_event(PullRequestEventType::CommentAdded),
+        ];
+
+        let update_details = get_update_details(&events);
+
+        assert_eq!(
+            update_details,
+            vec![
+                "2 new comments on PR".to_string(),
+                "New update on PR".to_string(),
+            ]
+        )
     }
 }
