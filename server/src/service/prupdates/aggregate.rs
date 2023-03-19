@@ -41,7 +41,7 @@ fn get_update_details(events: &[PullRequestEvent]) -> Vec<String> {
     // sort by event type to achieve a stable order of details
     let mut map_entries: Vec<(PullRequestEventType, Vec<&PullRequestEvent>)> =
         grouped_events.into_iter().collect();
-    map_entries.sort_by_key(|(event_type, _evts)| event_type.clone());
+    map_entries.sort_by_key(|(event_type, _evts)| *event_type);
 
     map_entries
         .into_iter()
