@@ -43,3 +43,30 @@ export type PipelineStatus =
   | 'None'
   | 'Canceled'
   | 'Queued';
+
+export type PullRequestUpdateType =
+  | 'Aggregated'
+  | 'Opened'
+  | 'Approved'
+  | 'Merged'
+  | 'CommentAdded'
+  | 'SourceBranchUpdated';
+
+export interface PullRequestUpdate {
+  pr_id: string;
+  update_type: PullRequestUpdateType;
+  author: string;
+  title: string;
+  timestamp: string;
+  repository: string;
+  details: string[];
+}
+
+export interface GetPullRequestUpdatesPayload {
+  pull_requests_last_seen: PullRequestLastSeenPayload[];
+}
+
+export interface PullRequestLastSeenPayload {
+  pr_id: string;
+  last_seen_timestamp: string;
+}

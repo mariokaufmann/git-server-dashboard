@@ -1,16 +1,17 @@
-use crate::data::bitbucket::model::{
+use std::collections::{HashMap, HashSet};
+
+use anyhow::{anyhow, Context};
+use chrono::{TimeZone, Utc};
+
+use crate::adapter::bitbucket::repositories::model::{
     BitbucketBuildState, BranchResponse, BuildStatusResponse, PaginatedResponse,
     PullRequestResponse, RepositoryResponse, UserResponse,
 };
-use crate::data::bitbucket::BitbucketClient;
-use crate::data::model::{
-    DashboardData, PipelineStatus, PullRequest, PullRequestTargetBranch, RepositoryBranchData,
-    StandaloneBranch,
+use crate::adapter::bitbucket::repositories::BitbucketClient;
+use crate::service::repositories::model::{
+    PipelineStatus, PullRequest, PullRequestTargetBranch, RepositoriesData, Repository,
+    RepositoryBranchData, StandaloneBranch,
 };
-use crate::model::Repository;
-use anyhow::{anyhow, Context};
-use chrono::{TimeZone, Utc};
-use std::collections::{HashMap, HashSet};
 
 fn get_repo_sub_url(repository: &Repository, suffix: &str) -> String {
     format!(
@@ -27,11 +28,11 @@ fn get_user_url(user_slug: &str) -> String {
     format!("api/1.0/users/{user_slug}?avatarSize=32")
 }
 
-pub async fn load_dashboard_data(
+pub async fn load_repositories_data(
     bitbucket_url: &str,
     client: &BitbucketClient,
     repositories: &[Repository],
-) -> anyhow::Result<DashboardData> {
+) -> anyhow::Result<RepositoriesData> {
     let mut user_map: HashMap<String, UserResponse> = HashMap::new();
     // Option<BuildStatusResponse> because not every commit has a corresponding build
     let mut build_status_map: HashMap<String, Option<BuildStatusResponse>> = HashMap::new();
@@ -78,7 +79,7 @@ pub async fn load_dashboard_data(
     }
 
     let last_updated_date = Utc::now().format("%+").to_string();
-    Ok(DashboardData {
+    Ok(RepositoriesData {
         last_updated_date: Some(last_updated_date),
         repositories: repository_branch_datas,
         currently_refreshing: false,

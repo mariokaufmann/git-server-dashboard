@@ -2,7 +2,7 @@ import type { DashboardData } from '../types';
 import { estimateLineCount } from './utils';
 
 export async function getDashboardData(): Promise<DashboardData> {
-  const res = await fetch(`/api/dashboard-data`);
+  const res = await fetch('/api/dashboard-data');
   const text = await res.text();
 
   if (res.ok) {

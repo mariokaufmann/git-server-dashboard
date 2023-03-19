@@ -5,3 +5,4 @@ branch-dashboard*.zip
 docker/static
 docker/branch-dashboard
 .DS_Store
+*.sqlite

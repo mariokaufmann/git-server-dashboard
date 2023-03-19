@@ -2,16 +2,16 @@ use std::collections::HashSet;
 
 use anyhow::Context;
 
-use crate::data::gitlab::model::{
+use crate::adapter::gitlab::repositories::model::{
     BranchDetails, BranchResponse, GitlabPipelineStatus, JobResponse,
     MergeRequestApprovalsResponse, MergeRequestDetails, MergeRequestResponse, PipelineResponse,
     ProjectDetails, ProjectResponse, SingleMergeRequestResponse,
 };
-use crate::data::gitlab::GitlabClient;
-use crate::data::model::{
-    PipelineStatus, PullRequest, PullRequestTargetBranch, RepositoryBranchData, StandaloneBranch,
+use crate::adapter::gitlab::repositories::GitlabClient;
+use crate::service::repositories::model::{
+    PipelineStatus, PullRequest, PullRequestTargetBranch, Repository, RepositoryBranchData,
+    StandaloneBranch,
 };
-use crate::model::Repository;
 
 pub async fn load_repository_data(
     client: &GitlabClient,

@@ -6,13 +6,13 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{LockableCache, DASHBOARD_VERSION};
 
-pub mod routes;
+pub mod prupdates;
 
-async fn get_server_version() -> impl IntoResponse {
+pub async fn get_server_version() -> impl IntoResponse {
     DASHBOARD_VERSION
 }
 
-async fn get_dashboard_data(
+pub async fn get_dashboard_data(
     Extension(cache): Extension<LockableCache>,
     reload_sender: Extension<UnboundedSender<()>>,
 ) -> impl IntoResponse {

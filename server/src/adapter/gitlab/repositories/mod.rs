@@ -3,9 +3,8 @@ use axum::http;
 use chrono::Utc;
 use reqwest::Method;
 
-use crate::data::gitlab::request::load_repository_data;
-use crate::data::model::DashboardData;
-use crate::model::Repository;
+use crate::adapter::gitlab::repositories::request::load_repository_data;
+use crate::service::repositories::model::{RepositoriesData, Repository};
 
 mod model;
 mod request;
@@ -57,7 +56,7 @@ impl GitlabClient {
         Ok(parsed_body)
     }
 
-    pub async fn load_dashboard_data(&self) -> anyhow::Result<DashboardData> {
+    pub async fn load_repositories_data(&self) -> anyhow::Result<RepositoriesData> {
         let mut repositories = Vec::new();
         for repository in &self.repositories {
             let repository_data = load_repository_data(self, repository)
@@ -67,7 +66,7 @@ impl GitlabClient {
         }
 
         let last_updated_date = Utc::now().format("%+").to_string();
-        Ok(DashboardData {
+        Ok(RepositoriesData {
             last_updated_date: Some(last_updated_date),
             repositories,
             currently_refreshing: false,

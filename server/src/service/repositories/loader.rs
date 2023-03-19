@@ -1,9 +1,9 @@
-use crate::data::bitbucket::BitbucketClient;
-use crate::data::gitlab::GitlabClient;
-use crate::data::model::DashboardData;
-use crate::model::Repository;
-use crate::Configuration;
 use anyhow::{anyhow, Context};
+
+use crate::adapter::bitbucket::repositories::BitbucketClient;
+use crate::adapter::gitlab::repositories::GitlabClient;
+use crate::service::repositories::model::{RepositoriesData, Repository};
+use crate::Configuration;
 
 pub struct DataLoader {
     gitlab_client: Option<GitlabClient>,
@@ -51,17 +51,17 @@ impl DataLoader {
         })
     }
 
-    pub async fn load_data(&self) -> anyhow::Result<DashboardData> {
+    pub async fn load_data(&self) -> anyhow::Result<RepositoriesData> {
         if let Some(gitlab_client) = &self.gitlab_client {
             let data = gitlab_client
-                .load_dashboard_data()
+                .load_repositories_data()
                 .await
                 .context("Could not load dashboard data from Gitlab.")?;
             return Ok(data);
         }
         if let Some(bitbucket_client) = &self.bitbucket_client {
             let data = bitbucket_client
-                .load_dashboard_data()
+                .load_repositories_data()
                 .await
                 .context("Could not load dashboard data from Bitbucket.")?;
             return Ok(data);

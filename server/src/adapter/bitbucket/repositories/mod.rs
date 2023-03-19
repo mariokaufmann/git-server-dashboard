@@ -1,8 +1,8 @@
-use crate::data::bitbucket::request::load_dashboard_data;
-use crate::data::model::DashboardData;
-use crate::model::Repository;
 use anyhow::{anyhow, Context};
 use axum::http::Method;
+
+use crate::adapter::bitbucket::repositories::request::load_repositories_data;
+use crate::service::repositories::model::{RepositoriesData, Repository};
 
 mod model;
 mod request;
@@ -58,7 +58,7 @@ impl BitbucketClient {
         Ok(parsed_body)
     }
 
-    pub async fn load_dashboard_data(&self) -> anyhow::Result<DashboardData> {
-        load_dashboard_data(&self.url, self, &self.repositories).await
+    pub async fn load_repositories_data(&self) -> anyhow::Result<RepositoriesData> {
+        load_repositories_data(&self.url, self, &self.repositories).await
     }
 }

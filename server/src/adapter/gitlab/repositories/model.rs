@@ -1,7 +1,9 @@
-use crate::model::Repository;
-use serde_derive::Deserialize;
 use std::fmt;
 use std::fmt::Formatter;
+
+use serde_derive::Deserialize;
+
+use crate::service::repositories::model::Repository;
 
 pub struct ProjectDetails {
     pub id: u32,

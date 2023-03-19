@@ -1,0 +1,13 @@
+POST http://localhost:8080/api/pr-updates
+Content-Type: application/json
+
+{
+  "pullRequestsLastSeen" : [
+    {
+      "prId" : 8013614834121321949,
+      "lastSeenTimestamp": "2023-03-06T20:40:02+0000"
+    }
+  ]
+}
+
+###
