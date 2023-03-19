@@ -87,7 +87,7 @@ async fn start_with_config(
                 error!("Could not start server: {}", err);
             }
         }
-        Err(err) => error!("Could not configure server routes: {}", err),
+        Err(err) => error!("Could not configure server routes: {:#}", err),
     }
     Ok(())
 }
