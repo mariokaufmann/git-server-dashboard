@@ -41,7 +41,12 @@ impl PullRequestUpdateService {
                     .push(event)
             });
 
-        let updates = grouped_events
+        // sort by pr_id to achieve a stable order of pr updates
+        let mut map_entries: Vec<(String, Vec<PullRequestEvent>)> =
+            grouped_events.into_iter().collect();
+        map_entries.sort_by_key(|(pr_id, _evts)| pr_id.clone());
+
+        let updates = map_entries
             .into_iter()
             .map(|(pr_id, evts)| aggregate_events(pr_id, evts))
             .collect::<anyhow::Result<Vec<PullRequestUpdate>>>()
