@@ -1,10 +1,10 @@
 #!/bin/bash
 
 rm -rf ./target
-rm -f "branch-dashboard-$1.zip"
+rm -f "git-server-dashboard-$1.zip"
 
 mkdir ./target
-cp ./server/target/release/branch-dashboard target/
+cp ./server/target/release/git-server-dashboard target/
 cp -r ./server/static target/
 
-cd target && zip -r "../branch-dashboard-$1.zip" ** && cd -
+cd target && zip -r "../git-server-dashboard-$1.zip" ** && cd -

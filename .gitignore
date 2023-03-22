@@ -1,8 +1,8 @@
 target/
 **/.idea
 **/*.iml
-branch-dashboard*.zip
+git-server-dashboard*.zip
 docker/static
-docker/branch-dashboard
+docker/git-server-dashboard
 .DS_Store
 *.sqlite

@@ -1,6 +1,6 @@
 FROM ubuntu:jammy
 WORKDIR /app
-COPY branch-dashboard /app/
+COPY git-server-dashboard /app/
 COPY static /app/static
-CMD ["/app/branch-dashboard"]
+CMD ["/app/git-server-dashboard"]
 EXPOSE 8080
