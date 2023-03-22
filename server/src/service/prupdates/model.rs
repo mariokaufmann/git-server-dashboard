@@ -33,6 +33,7 @@ pub struct PullRequestEvent {
     pub repository: String,
     pub text: String,
     pub timestamp: PullRequestTimestamp,
+    pub pr_link: String,
 }
 
 #[derive(Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString)]
@@ -54,4 +55,5 @@ pub struct PullRequestUpdate {
     pub repository: String,
     pub details: Vec<String>,
     pub timestamp: PullRequestTimestamp,
+    pub pr_link: String,
 }

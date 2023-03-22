@@ -12,6 +12,7 @@ pub struct Model {
     pub repository: String,
     pub title: String,
     pub text: String,
+    pub pr_link: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

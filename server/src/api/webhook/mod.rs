@@ -1,7 +1,7 @@
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -71,6 +71,7 @@ fn parse_pr_event_payload(
     let text = get_event_text(&event_type, &value).context("Could not map PR event text.")?;
     let payload = parse_event_payload::<CommonPullRequestEventPayload>(value)?;
     let pr_id = hash_pull_request(&payload.pull_request);
+    let pr_link = get_pull_request_link(&payload.pull_request)?;
 
     let timestamp = chrono::offset::Utc::now();
 
@@ -85,19 +86,20 @@ fn parse_pr_event_payload(
         repository: payload.pull_request.from_ref.repository.name,
         title: payload.pull_request.title,
         text,
+        pr_link,
     };
 
     Ok(pull_request_event)
 }
 
-fn map_event_type(event_type: &PREventType) -> PullRequestEventType {
-    match event_type {
-        PREventType::Opened => PullRequestEventType::Opened,
-        PREventType::Approved => PullRequestEventType::Approved,
-        PREventType::Merged => PullRequestEventType::Merged,
-        PREventType::CommentAdded => PullRequestEventType::CommentAdded,
-        PREventType::SourceBranchUpdated => PullRequestEventType::SourceBranchUpdated,
-    }
+fn hash_pull_request(pull_request: &PullRequestPayload) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    pull_request.hash(&mut hasher);
+    hasher.finish()
+}
+
+fn parse_event_payload<T: DeserializeOwned>(value: serde_json::Value) -> anyhow::Result<T> {
+    serde_json::from_value::<T>(value).context("Could not parse pull request event payload.")
 }
 
 fn get_event_text(event_type: &PREventType, value: &serde_json::Value) -> anyhow::Result<String> {
@@ -114,14 +116,14 @@ fn get_event_text(event_type: &PREventType, value: &serde_json::Value) -> anyhow
     }
 }
 
-fn hash_pull_request(pull_request: &PullRequestPayload) -> u64 {
-    let mut hasher = DefaultHasher::new();
-    pull_request.hash(&mut hasher);
-    hasher.finish()
-}
-
-fn parse_event_payload<T: DeserializeOwned>(value: serde_json::Value) -> anyhow::Result<T> {
-    serde_json::from_value::<T>(value).context("Could not parse pull request event payload.")
+fn map_event_type(event_type: &PREventType) -> PullRequestEventType {
+    match event_type {
+        PREventType::Opened => PullRequestEventType::Opened,
+        PREventType::Approved => PullRequestEventType::Approved,
+        PREventType::Merged => PullRequestEventType::Merged,
+        PREventType::CommentAdded => PullRequestEventType::CommentAdded,
+        PREventType::SourceBranchUpdated => PullRequestEventType::SourceBranchUpdated,
+    }
 }
 
 fn map_event_key(event_key: &str) -> Option<PREventType> {
@@ -133,4 +135,13 @@ fn map_event_key(event_key: &str) -> Option<PREventType> {
         "pr:from_ref_updated" => Some(PREventType::SourceBranchUpdated),
         _ => None,
     }
+}
+
+fn get_pull_request_link(pull_request: &PullRequestPayload) -> anyhow::Result<String> {
+    pull_request
+        .links
+        .self_links
+        .first()
+        .map(|link| link.href.clone())
+        .ok_or_else(|| anyhow!("Could not find self link on Bitbucket webhook payload."))
 }

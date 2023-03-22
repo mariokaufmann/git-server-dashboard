@@ -23,6 +23,18 @@ pub(super) struct PullRequestPayload {
     pub title: String,
     pub from_ref: GitRefPayload,
     pub to_ref: GitRefPayload,
+    pub links: PullRequestLinksPayload,
+}
+
+#[derive(Deserialize)]
+pub(super) struct PullRequestLinksPayload {
+    #[serde(rename = "self")]
+    pub self_links: Vec<PullRequestLinkPayload>,
+}
+
+#[derive(Deserialize)]
+pub(super) struct PullRequestLinkPayload {
+    pub href: String,
 }
 
 impl Hash for PullRequestPayload {

@@ -31,6 +31,7 @@ impl PullRequestEventRepository {
             repository: Set(event.repository),
             title: Set(event.title),
             text: Set(event.text),
+            pr_link: Set(event.pr_link),
         };
 
         event_entity
@@ -61,6 +62,7 @@ impl PullRequestEventRepository {
                     repository: model.repository,
                     title: model.title,
                     text: model.text,
+                    pr_link: model.pr_link,
                 })
             })
             .collect::<anyhow::Result<Vec<PullRequestEvent>>>()

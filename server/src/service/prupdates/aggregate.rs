@@ -26,6 +26,7 @@ pub fn aggregate_events(
         author: last_event.author.clone(),
         update_type,
         details,
+        pr_link: last_event.pr_link.clone(),
     })
 }
 
@@ -96,6 +97,7 @@ mod tests {
             author: "author1".to_string(),
             text: "text".to_string(),
             title: "title".to_string(),
+            pr_link: "link".to_string(),
         }
     }
 

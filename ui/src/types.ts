@@ -58,6 +58,7 @@ export interface PullRequestUpdate {
   author: string;
   title: string;
   timestamp: string;
+  pr_link: string;
   repository: string;
   details: string[];
 }

@@ -1,5 +1,5 @@
 - PR Update: show comment text in UI
 - Load data from the backend using SSE
-- Map PR link for PR updates
 - Write basic documentation / readme
-- Fix padding of loading spinner
+- Implement webhook receiver also for gitlab and move current logic to api api/webhook/bitbucket
+- Implement cleanup in backend (clean up old PRs from DB eventually)
