@@ -1,7 +1,16 @@
 import dayjs from 'dayjs';
 
+const CurrentVersion = 1;
+
+interface StoredPullRequestUpdateLastSeen {
+  prId: string;
+  lastSeenTimestamp: string;
+}
+
 interface LastSeenStorageItem {
-  lastSeen: { [key: string]: string };
+  version: number;
+
+  pullRequests: StoredPullRequestUpdateLastSeen[];
 }
 
 export interface PullRequestUpdateLastSeen {
@@ -11,59 +20,43 @@ export interface PullRequestUpdateLastSeen {
 
 const STORAGE_KEY = 'prUpdateLastSeen';
 
-export function getPullRequestUpdatesLastSeen(): PullRequestUpdateLastSeen[] {
+export function loadStoredLastSeen(): PullRequestUpdateLastSeen[] {
   const storedLastSeen = localStorage.getItem(STORAGE_KEY);
   if (!storedLastSeen) {
     return [];
   }
-  const parsedStoredLastSeen = JSON.parse(
-    storedLastSeen
-  ) as LastSeenStorageItem;
-  return Object.entries(parsedStoredLastSeen.lastSeen).map(
-    ([prId, lastSeenTimestamp]) => ({
-      prId,
-      lastSeenTimestamp,
-    })
-  );
+  const parsedLastSeen: LastSeenStorageItem = JSON.parse(storedLastSeen);
+  if (!parsedLastSeen.version || parsedLastSeen.version !== CurrentVersion) {
+    console.log('Found old version of last seen, clearing.');
+    localStorage.removeItem(STORAGE_KEY);
+    return [];
+  }
+  return cleanupLastSeen(parsedLastSeen.pullRequests);
+}
+
+export function storePullRequestUpdatesLastSeen(
+  lastSeen: PullRequestUpdateLastSeen[]
+) {
+  const storedLastSeen: LastSeenStorageItem = {
+    version: CurrentVersion,
+    pullRequests: lastSeen,
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(storedLastSeen));
 }
 
 // we clean up old entries in the last seen list after 1 month
+function cleanupLastSeen(
+  lastSeen: PullRequestUpdateLastSeen[]
+): PullRequestUpdateLastSeen[] {
+  const filteredLastSeen = lastSeen.filter((pullRequest) =>
+    lastSeenWithinThreshold(pullRequest.lastSeenTimestamp)
+  );
+  storePullRequestUpdatesLastSeen(filteredLastSeen);
+  return filteredLastSeen;
+}
+
 function lastSeenWithinThreshold(timestamp: string): boolean {
   const parsedTimestamp = dayjs(timestamp);
   const ageThreshold = dayjs().subtract(1, 'month');
   return parsedTimestamp.isAfter(ageThreshold);
-}
-
-export function storePullRequestUpdatesLastSeen(lastSeen: {
-  [key: string]: string;
-}) {
-  const filteredLastSeen = Object.entries(lastSeen).filter(([_, timestamp]) =>
-    lastSeenWithinThreshold(timestamp)
-  );
-
-  const lastSeenItem: LastSeenStorageItem = {
-    lastSeen: Object.fromEntries(filteredLastSeen),
-  };
-  const serializedLastSeen = JSON.stringify(lastSeenItem);
-  localStorage.setItem(STORAGE_KEY, serializedLastSeen);
-}
-
-export function storePullRequestUpdateLastSeen(
-  prId: string,
-  timestamp: string
-) {
-  const storedLastSeen = localStorage.getItem(STORAGE_KEY);
-  let newMappings;
-  if (storedLastSeen) {
-    const parsedStoredLastSeen = JSON.parse(
-      storedLastSeen
-    ) as LastSeenStorageItem;
-    newMappings = {
-      ...parsedStoredLastSeen.lastSeen,
-      [prId]: timestamp,
-    };
-  } else {
-    newMappings = { [prId]: timestamp };
-  }
-  storePullRequestUpdatesLastSeen(newMappings);
 }
