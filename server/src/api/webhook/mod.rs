@@ -129,7 +129,7 @@ fn map_event_type(event_type: &PREventType) -> PullRequestEventType {
 fn map_event_key(event_key: &str) -> Option<PREventType> {
     match event_key {
         "pr:opened" => Some(PREventType::Opened),
-        "pr:approved" => Some(PREventType::Approved),
+        "pr:reviewer:approved" => Some(PREventType::Approved),
         "pr:merged" => Some(PREventType::Merged),
         "pr:comment:added" => Some(PREventType::CommentAdded),
         "pr:from_ref_updated" => Some(PREventType::SourceBranchUpdated),
