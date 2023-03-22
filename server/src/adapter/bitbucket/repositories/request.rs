@@ -15,17 +15,17 @@ use crate::service::repositories::model::{
 
 fn get_repo_sub_url(repository: &Repository, suffix: &str) -> String {
     format!(
-        "api/1.0/projects/{}/repos/{}/{}",
+        "api/latest/projects/{}/repos/{}/{}",
         repository.group, repository.name, suffix
     )
 }
 
 fn get_build_status_url(commit_id: &str) -> String {
-    format!("build-status/1.0/commits/{commit_id}")
+    format!("build-status/latest/commits/{commit_id}")
 }
 
 fn get_user_url(user_slug: &str) -> String {
-    format!("api/1.0/users/{user_slug}?avatarSize=32")
+    format!("api/latest/users/{user_slug}?avatarSize=32")
 }
 
 pub async fn load_repositories_data(
