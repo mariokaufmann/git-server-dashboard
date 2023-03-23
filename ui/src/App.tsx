@@ -68,6 +68,15 @@ const App: Component = () => {
     }
   };
 
+  const markAllUpdatesAsSeen = () => {
+    const updates = prUpdates();
+    if (updates) {
+      markAllUpdatesAsLastSeenNow(updates);
+    } else {
+      console.error('Cannot mark PR updates as seen as they are not loaded.');
+    }
+  };
+
   return (
     <div>
       <Show when={dashboardData()} fallback={<p>Data not loaded yet</p>} keyed>
@@ -101,7 +110,7 @@ const App: Component = () => {
               <div class={styles.prUpdatesSection}>
                 <div class={styles.sectionTitle}>
                   <h2>PR Updates</h2>
-                  <span onClick={() => markAllUpdatesAsLastSeenNow()}>
+                  <span onClick={() => markAllUpdatesAsSeen()}>
                     <p>Close all</p>
                     <i class="fa-solid fa-xmark" title="Close"></i>
                   </span>
