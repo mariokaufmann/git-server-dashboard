@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, Context};
 use chrono::{TimeZone, Utc};
+use log::info;
 
 use crate::adapter::bitbucket::repositories::model::{
     BitbucketBuildState, BranchResponse, BuildStatusResponse, PaginatedResponse,
@@ -141,7 +142,8 @@ async fn get_build_status(
         .request(&url)
         .await
         .with_context(|| format!("Could not load build status for commit {commit_id}."))?;
-    let build_status = response.values.into_iter().last();
+    // get first element
+    let build_status = response.values.into_iter().take(1).last();
     Ok(build_status)
 }
 
