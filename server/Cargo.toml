@@ -1,5 +1,5 @@
 [package]
-name = "branch-dashboard"
+name = "git-server-dashboard"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,7 @@ edition = "2021"
 members = [".", "migration"]
 
 [dependencies]
-migration = { path = "migration" } # depends on your needs
+migration = { path = "migration" }
 
 axum = "0.6.10"
 axum-server = { version = "0.4.6", features = ["tokio-rustls"] }

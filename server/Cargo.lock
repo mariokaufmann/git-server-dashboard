@@ -402,29 +402,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "branch-dashboard"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "axum-macros",
- "axum-server",
- "chrono",
- "config",
- "log",
- "log4rs",
- "migration",
- "reqwest",
- "sea-orm",
- "serde",
- "serde_derive",
- "serde_json",
- "tokio",
- "tower",
- "tower-http",
-]
-
-[[package]]
 name = "bumpalo"
 version = "3.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -818,6 +795,29 @@ dependencies = [
  "cfg-if",
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
+]
+
+[[package]]
+name = "git-server-dashboard"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "axum-macros",
+ "axum-server",
+ "chrono",
+ "config",
+ "log",
+ "log4rs",
+ "migration",
+ "reqwest",
+ "sea-orm",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "tokio",
+ "tower",
+ "tower-http",
 ]
 
 [[package]]

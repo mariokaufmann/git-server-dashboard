@@ -74,7 +74,7 @@ async fn start_with_config(
     db_connection: DatabaseConnection,
     reload_sender: UnboundedSender<()>,
 ) -> anyhow::Result<()> {
-    info!("Starting branch dashboard server...");
+    info!("Starting git server dashboard...");
     let pr_event_repository = PullRequestEventRepository::new(db_connection);
     let pr_event_service = PullRequestUpdateService::new(pr_event_repository);
     match get_router(cache, pr_event_service, reload_sender) {

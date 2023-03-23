@@ -8,13 +8,13 @@ jobs:
         include:
           - label: ubuntu-latest
             script: chmod +x ./package/package.sh && ./package/package.sh linux
-            artifact: branch-dashboard-linux
+            artifact: git-server-dashboard-linux
           - label: macos-latest
             script: chmod +x ./package/package.sh && ./package/package.sh macos
-            artifact: branch-dashboard-macos
+            artifact: git-server-dashboard-macos
           - label: windows-latest
             script: .\package\package.ps1
-            artifact: branch-dashboard-windows
+            artifact: git-server-dashboard-windows
     runs-on: [ '${{ matrix.label }}' ]
     steps:
       - uses: actions/checkout@v3
@@ -75,14 +75,14 @@ jobs:
         with:
           context: docker
           push: true
-          tags: mariokaufmann/branch-dashboard:latest
+          tags: mariokaufmann/git-server-dashboard:latest
       - name: Build and push Docker image (tagged)
         if: ${{ matrix.label == 'ubuntu-latest' && steps.version.outputs.is_valid == 'true' }}
         uses: docker/build-push-action@v4
         with:
           context: docker
           push: true
-          tags: mariokaufmann/branch-dashboard:latest,mariokaufmann/branch-dashboard:${{ steps.version.outputs.full_without_prefix }}
+          tags: mariokaufmann/git-server-dashboard:latest,mariokaufmann/git-server-dashboard:${{ steps.version.outputs.full_without_prefix }}
       - name: Attach artifact to release
         if: ${{ steps.version.outputs.is_valid == 'true' }}
         uses: softprops/action-gh-release@v1

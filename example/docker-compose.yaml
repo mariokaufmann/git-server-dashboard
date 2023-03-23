@@ -1,7 +1,7 @@
 services:
-  branch-dashboard:
-    container_name: branch-dashboard
-    image: mariokaufmann/branch-dashboard:latest
+  git-server-dashboard:
+    container_name: git-server-dashboard
+    image: mariokaufmann/git-server-dashboard:latest
     ports:
       - 8080:8080
     volumes:
