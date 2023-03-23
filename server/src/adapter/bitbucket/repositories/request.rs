@@ -2,7 +2,6 @@ use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, Context};
 use chrono::{TimeZone, Utc};
-use log::info;
 
 use crate::adapter::bitbucket::repositories::model::{
     BitbucketBuildState, BranchResponse, BuildStatusResponse, PaginatedResponse,
