@@ -85,7 +85,7 @@ const App: Component = () => {
             <div class={styles.header}>
               {dashboardData.last_updated_date && (
                 <p>
-                  Last updated:
+                  Last updated:{' '}
                   {dayjs(dashboardData.last_updated_date).format('HH:mm:ss')}
                 </p>
               )}
