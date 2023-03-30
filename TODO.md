@@ -3,3 +3,4 @@
 - Write basic documentation / readme
 - Implement webhook receiver also for gitlab and move current logic to api api/webhook/bitbucket
 - Implement cleanup in backend (clean up old PRs from DB eventually)
+- Rename config keys from BRANCHDASHBOARD to GITSERVERDASHBOARD and add examples for config
