@@ -14,16 +14,16 @@
   "license": "MIT",
   "devDependencies": {
     "cpy-cli": "4.2.0",
-    "prettier": "2.8.7",
+    "prettier": "2.8.8",
     "typescript": "5.0.4",
-    "vite": "4.2.1",
-    "vite-plugin-solid": "2.6.1"
+    "vite": "4.3.3",
+    "vite-plugin-solid": "2.7.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.4.0",
     "dayjs": "1.11.7",
     "modern-normalize": "1.1.0",
     "normalize.css": "8.0.1",
-    "solid-js": "1.7.0"
+    "solid-js": "1.7.3"
   }
 }
