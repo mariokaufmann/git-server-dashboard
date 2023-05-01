@@ -9,19 +9,19 @@ members = [".", "migration"]
 [dependencies]
 migration = { path = "migration" }
 
-axum = "0.6.12"
+axum = "0.6.18"
 axum-server = { version = "0.4.7", features = ["tokio-rustls"] }
 axum-macros = "0.3.7"
-anyhow = "1.0.70"
+anyhow = "1.0.71"
 chrono = "0.4.24"
 log = "0.4.17"
 log4rs = "1.2.0"
-reqwest = { version = "0.11.16", features = ["json", "rustls-tls"], default-features = false }
-sea-orm = { version = "0.11.2", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"] }
-serde = "1.0.159"
-serde_derive = "1.0.159"
-serde_json = "1.0.95"
-tokio = { version = "1.27.0", features = ["macros", "rt-multi-thread"] }
+reqwest = { version = "0.11.17", features = ["json", "rustls-tls"], default-features = false }
+sea-orm = { version = "0.11.3", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"] }
+serde = "1.0.160"
+serde_derive = "1.0.160"
+serde_json = "1.0.96"
+tokio = { version = "1.28.0", features = ["macros", "rt-multi-thread"] }
 tower = { version = "0.4.13", features = ["filter"] }
 tower-http = { version = "0.4.0", features = ["fs", "trace"] }
 config = { version = "0.13.3", features = ["json", "json5", "serde_json"], default-features = false }
