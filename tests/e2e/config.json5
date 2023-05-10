@@ -14,5 +14,5 @@
   bitbucket: {
     url: "http://localhost:3001",
     user: "test@user.com",
-  }
+  },
 }

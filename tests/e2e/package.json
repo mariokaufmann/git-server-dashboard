@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "run:ui" : "playwright test --ui",
+    "run:ui": "playwright test --ui",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
+    "lint": "npm run prettier:check",
     "start:ui": "npm run dev --prefix ../../ui",
     "start:backend": "cargo run --package git-server-dashboard --bin git-server-dashboard --manifest-path ../../server/Cargo.toml",
     "start:mock": "npm run mock:dev --prefix ../../mock"
@@ -13,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "1.33.0"
+    "@playwright/test": "1.33.0",
+    "prettier": "2.8.8"
   }
 }
