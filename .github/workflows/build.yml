@@ -63,14 +63,15 @@ jobs:
           rustup component add clippy
           cargo clippy -- -D warnings
         working-directory: ./server
-      - name: Build server
-        run: cargo build --release
-        working-directory: ./server
       - name: Run e2e tests
         run: |
           npm ci --omit=optional
           npx playwright install --with-deps
           npx playwright test
+        working-directory: ./tests/e2e
+      - name: Build server
+        run: cargo build --release
+        working-directory: ./server
       - name: Package
         run: ${{ matrix.script }}
       - name: Upload artifact
