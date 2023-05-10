@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from "express";
 import * as swaggerUiExpress from "swagger-ui-express";
 import { errorInterceptor } from "./interceptor/errorInterceptor";
 import { bitbucketRouter } from "./router/bitbucket/bitbucketRouter";
-import {bitbucketWebhookTrigger} from "./router/bitbucket/bitbucketWebhookTrigger";
+import { bitbucketWebhookTrigger } from "./router/bitbucket/bitbucketWebhookTrigger";
 
 const app: Express = express();
 const port = 3001;

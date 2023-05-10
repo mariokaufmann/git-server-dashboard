@@ -58,7 +58,7 @@ export function getGenerator(seed: string): DataGenerator {
     `${fakerInstance.person.firstName()} ${fakerInstance.person.lastName()}`;
   const generateBranchName = () => fakerInstance.git.branch();
   const generateCommitHash = () => fakerInstance.git.commitSha();
-  const generateCommitMessage= () => fakerInstance.git.commitMessage();
+  const generateCommitMessage = () => fakerInstance.git.commitMessage();
 
   return {
     generateFloat: numberGenerator,
@@ -71,6 +71,6 @@ export function getGenerator(seed: string): DataGenerator {
     generateName,
     generateBranchName,
     generateCommitHash,
-    generateCommitMessage
+    generateCommitMessage,
   };
 }
