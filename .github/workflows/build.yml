@@ -22,6 +22,17 @@ jobs:
         with:
           node-version: '16'
       - uses: dtolnay/rust-toolchain@stable
+      - name: Lint git server mock
+        if: ${{ matrix.label == 'ubuntu-latest' }}
+        run: |
+          npm ci --omit=optional
+          npm run lint
+        working-directory: ./mock
+      - name: Build git server mock
+        run: |
+          npm ci --omit=optional
+          npm run build
+        working-directory: ./mock
       - name: Lint UI
         if: ${{ matrix.label == 'ubuntu-latest' }}
         run: |
