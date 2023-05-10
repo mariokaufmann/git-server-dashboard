@@ -16044,30 +16044,6 @@
             }
           },
           {
-            "name": "start",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              }
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              }
-            }
-          },
-          {
             "name": "commitId",
             "in": "path",
             "required": true,

@@ -4,7 +4,7 @@
   "main": "app.ts",
   "scripts": {
     "mock:dev": "nodemon app.ts",
-    "build": "tsc",
+    "build": "npm run generate-types && tsc",
     "generate-types": "npx openapi-typescript definitions/bitbucket-8.10.swagger.v3.json --output definitions/generated/bitbucket.ts",
     "lint": "npm run prettier:check",
     "prettier:check": "prettier --check .",
