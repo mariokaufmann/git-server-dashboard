@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import * as swaggerUiExpress from "swagger-ui-express";
 import { errorInterceptor } from "./interceptor/errorInterceptor";
 import { bitbucketRouter } from "./router/bitbucket/bitbucketRouter";
+import {bitbucketWebhookTrigger} from "./router/bitbucket/bitbucketWebhookTrigger";
 
 const app: Express = express();
 const port = 3001;
@@ -25,6 +26,7 @@ app.use(
 
 app.use(express.json());
 app.use(bitbucketRouter);
+app.use(bitbucketWebhookTrigger);
 app.use(errorInterceptor);
 
 app.listen(port, function () {

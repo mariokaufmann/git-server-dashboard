@@ -60,6 +60,11 @@ jobs:
       - name: Build server
         run: cargo build --release
         working-directory: ./server
+      - name: Run e2e tests
+        run: |
+          npm ci --omit=optional
+          npx playwright install --with-deps
+          npx playwright test
       - name: Package
         run: ${{ matrix.script }}
       - name: Upload artifact
