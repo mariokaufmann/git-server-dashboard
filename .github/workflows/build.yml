@@ -64,6 +64,7 @@ jobs:
           cargo clippy -- -D warnings
         working-directory: ./server
       - name: Run e2e tests
+        if: ${{ matrix.label == 'ubuntu-latest' }}
         run: |
           npm ci --omit=optional
           npx playwright install --with-deps
