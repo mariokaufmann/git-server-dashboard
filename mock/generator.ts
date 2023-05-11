@@ -20,6 +20,7 @@ export type DataGenerator = {
   generateName: () => string;
   generateBranchName: () => string;
   generateCommitHash: () => string;
+  generateCommitMessage: () => string;
   generateId: () => string;
   pickRandomArrayElement: <T>(array: T[]) => T;
   randomPositiveInt: () => number;
@@ -28,7 +29,7 @@ export type DataGenerator = {
 
 export function getGenerator(seed: string): DataGenerator {
   const numberGenerator = seedrandom(seed);
-  const fakerInstance = new Faker({ locales: { en } });
+  const fakerInstance = new Faker({ locale: [en] });
   fakerInstance.seed(hash(seed));
 
   const pickRandomArrayElement: DataGenerator["pickRandomArrayElement"] = (
@@ -57,6 +58,7 @@ export function getGenerator(seed: string): DataGenerator {
     `${fakerInstance.person.firstName()} ${fakerInstance.person.lastName()}`;
   const generateBranchName = () => fakerInstance.git.branch();
   const generateCommitHash = () => fakerInstance.git.commitSha();
+  const generateCommitMessage = () => fakerInstance.git.commitMessage();
 
   return {
     generateFloat: numberGenerator,
@@ -69,5 +71,6 @@ export function getGenerator(seed: string): DataGenerator {
     generateName,
     generateBranchName,
     generateCommitHash,
+    generateCommitMessage,
   };
 }

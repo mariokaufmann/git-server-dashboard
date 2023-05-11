@@ -1,0 +1,19 @@
+{
+  port: 8080,
+  verbose: false,
+  repositories: [
+    "EXP/example-frontend",
+    "EXP/example-core-service",
+    "EXP/example-client-service",
+    "EXP/example-client-aggregation",
+    "EXP/example-task-service",
+    "EXP/example-task-aggregation",
+    "EXP/example-task-bff",
+    "EXP/example-ops",
+  ],
+  bitbucket: {
+    url: "http://localhost:3001",
+    user: "test@user.com",
+    password: "empty",
+  },
+}

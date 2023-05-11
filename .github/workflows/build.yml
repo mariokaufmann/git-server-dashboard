@@ -22,6 +22,12 @@ jobs:
         with:
           node-version: '16'
       - uses: dtolnay/rust-toolchain@stable
+      - name: Lint e2e tests
+        if: ${{ matrix.label == 'ubuntu-latest' }}
+        run: |
+          npm ci --omit=optional
+          npm run lint
+        working-directory: ./tests/e2e
       - name: Lint git server mock
         if: ${{ matrix.label == 'ubuntu-latest' }}
         run: |
@@ -57,6 +63,12 @@ jobs:
           rustup component add clippy
           cargo clippy -- -D warnings
         working-directory: ./server
+      - name: Run e2e tests
+        run: |
+          npm ci --omit=optional
+          npx playwright install --with-deps
+          npx playwright test
+        working-directory: ./tests/e2e
       - name: Build server
         run: cargo build --release
         working-directory: ./server
