@@ -41,10 +41,17 @@ impl PullRequestUpdateService {
                     .push(event)
             });
 
-        // sort by pr_id to achieve a stable order of pr updates
+        // sort by latest event timestamp
         let mut map_entries: Vec<(String, Vec<PullRequestEvent>)> =
             grouped_events.into_iter().collect();
-        map_entries.sort_by_key(|(pr_id, _evts)| pr_id.clone());
+        map_entries.sort_by_key(|(_pr_id, evts)| {
+            evts
+                .iter()
+                .map(|event| event.timestamp)
+                .max()
+                .unwrap_or_default()
+        });
+        map_entries.reverse();
 
         let updates = map_entries
             .into_iter()
