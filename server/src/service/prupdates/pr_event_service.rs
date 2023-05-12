@@ -91,3 +91,84 @@ impl PullRequestUpdateService {
             .context("Could not aggregate events into update.")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use chrono::TimeZone;
+
+    use crate::service::prupdates::model::{PullRequestEvent, PullRequestEventType};
+
+    use super::*;
+
+    #[test]
+    fn test_sort_by_latest_timestamp() {
+        let mut grouped_events: HashMap<String, Vec<PullRequestEvent>> = HashMap::new();
+
+        let mut events_pr1: Vec<PullRequestEvent> = Vec::new();
+        events_pr1.push(PullRequestEvent {
+            timestamp: Utc.with_ymd_and_hms(2023, 5, 10, 0, 0, 0).unwrap(),
+            ..get_pull_request_event()
+        });
+        events_pr1.push(PullRequestEvent {
+            timestamp: Utc.with_ymd_and_hms(2023, 5, 11, 0, 0, 0).unwrap(),
+            ..get_pull_request_event()
+        });
+        grouped_events.insert("pr1".to_string(), events_pr1);
+
+        let mut events_pr2: Vec<PullRequestEvent> = Vec::new();
+        events_pr2.push(PullRequestEvent {
+            timestamp: Utc.with_ymd_and_hms(2023, 5, 8, 0, 0, 0).unwrap(),
+            ..get_pull_request_event()
+        });
+        events_pr2.push(PullRequestEvent {
+            timestamp: Utc.with_ymd_and_hms(2023, 5, 13, 0, 0, 0).unwrap(),
+            ..get_pull_request_event()
+        });
+        grouped_events.insert("pr2".to_string(), events_pr2);
+
+        let sorted_grouped_events =
+            PullRequestUpdateService::sort_by_latest_timestamp(grouped_events);
+
+        assert_eq!(sorted_grouped_events[0].0, "pr2");
+        assert_eq!(sorted_grouped_events[1].0, "pr1");
+    }
+
+    #[test]
+    fn test_get_latest_timestamp() {
+        let events = vec![
+            PullRequestEvent {
+                timestamp: Utc.with_ymd_and_hms(2023, 5, 10, 0, 0, 0).unwrap(),
+                ..get_pull_request_event()
+            },
+            PullRequestEvent {
+                timestamp: Utc.with_ymd_and_hms(2023, 5, 12, 0, 0, 0).unwrap(),
+                ..get_pull_request_event()
+            },
+            PullRequestEvent {
+                timestamp: Utc.with_ymd_and_hms(2023, 5, 11, 0, 0, 0).unwrap(),
+                ..get_pull_request_event()
+            },
+        ];
+
+        let latest_timestamp = PullRequestUpdateService::get_latest_timestamp(&events);
+
+        assert_eq!(
+            latest_timestamp,
+            Utc.with_ymd_and_hms(2023, 5, 12, 0, 0, 0).unwrap(),
+        );
+    }
+
+    fn get_pull_request_event() -> PullRequestEvent {
+        PullRequestEvent {
+            id: Some(1),
+            pr_id: String::from(""),
+            event_type: PullRequestEventType::Opened,
+            author: String::from(""),
+            title: String::from(""),
+            repository: String::from(""),
+            text: String::from(""),
+            timestamp: Utc.with_ymd_and_hms(2000, 1, 1, 0, 0, 0).unwrap(),
+            pr_link: String::from(""),
+        }
+    }
+}
