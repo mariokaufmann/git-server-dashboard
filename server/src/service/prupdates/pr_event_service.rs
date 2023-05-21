@@ -2,8 +2,9 @@ use crate::adapter::db::prupdates::PullRequestEventRepository;
 use crate::service::prupdates::aggregate::aggregate_events;
 use crate::service::prupdates::model::{PullRequestEvent, PullRequestUpdate};
 use anyhow::Context;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 use std::collections::HashMap;
+use std::ops::Sub;
 
 #[derive(Clone)]
 pub struct PullRequestUpdateService {
@@ -53,5 +54,24 @@ impl PullRequestUpdateService {
             .context("Could not aggregate events into update.")?;
 
         Ok(updates)
+    }
+
+    pub async fn clean_up_pr_updates(&self) -> anyhow::Result<()> {
+        // TODO do this directly with where clause once date column is migrated
+        let oldest_timestamp = Utc::now() - Duration::days(7);
+        let events = self.pr_event_repository.get_events().await?;
+
+        for event in events {
+            if event.timestamp.lt(&oldest_timestamp) {
+                self.pr_event_repository.delete_events()
+            }
+        }
+        let events_to_delete: Vec<PullRequestEvent> = events.into_iter()
+            .filter(|event| {
+                event.timestamp.lt(&oldest_timestamp)
+            }).collect();
+        self.pr_event_repository.delete_events(&events_to_delete)
+            .await
+            .context
     }
 }
