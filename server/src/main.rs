@@ -2,6 +2,7 @@ extern crate core;
 
 use std::net::SocketAddr;
 use std::sync::Arc;
+use std::time::Duration;
 
 use anyhow::{anyhow, Context};
 use log::{error, info, LevelFilter};
@@ -77,6 +78,20 @@ async fn start_with_config(
     info!("Starting git server dashboard...");
     let pr_event_repository = PullRequestEventRepository::new(db_connection);
     let pr_event_service = PullRequestUpdateService::new(pr_event_repository);
+
+    let clean_up_pr_service = pr_event_service.clone();
+    // start pr event cleanup job
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(Duration::from_secs(60));
+
+        loop {
+            interval.tick().await;
+            if let Err(err) = clean_up_pr_service.clean_up_pr_updates().await {
+                error!("Could not clean up old PR update events: {:#}", err);
+            }
+        }
+    });
+
     match get_router(cache, pr_event_service, reload_sender) {
         Ok(router) => {
             let addr = SocketAddr::from(([0, 0, 0, 0], port));
