@@ -69,4 +69,15 @@ impl PullRequestEventRepository {
             .context("Could not map DB entities to service entities.")?;
         Ok(mapped_events)
     }
+
+    pub async fn delete_events(&self, events: &[PullRequestEvent]) -> anyhow::Result<()> {
+        let ids: Vec<i32> = events.iter().filter_map(|event| event.id).collect();
+        for id in ids {
+            pull_request_event::Entity::delete_by_id(id)
+                .exec(&self.db)
+                .await
+                .context("Could not delete PR event from DB")?;
+        }
+        Ok(())
+    }
 }
