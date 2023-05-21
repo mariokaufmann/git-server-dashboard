@@ -3,7 +3,7 @@ use crate::service::prupdates::aggregate::aggregate_events;
 use crate::service::prupdates::model::{PullRequestEvent, PullRequestUpdate};
 use anyhow::Context;
 use chrono::{DateTime, Duration, Utc};
-use log::{info, log};
+use log::info;
 use std::collections::HashMap;
 
 const EVENT_MAX_AGE_DAYS: i64 = 7;
@@ -68,7 +68,7 @@ impl PullRequestUpdateService {
             .filter(|event| event.timestamp.lt(&oldest_timestamp))
             .collect();
 
-        if events_to_delete.len() > 0 {
+        if !events_to_delete.is_empty() {
             info!("Will delete {} old PR events", events_to_delete.len());
         }
 
