@@ -4,16 +4,7 @@ use serde_derive::Serialize;
 pub type PullRequestTimestamp = DateTime<Utc>;
 
 #[derive(
-    Clone,
-    Copy,
-    PartialOrd,
-    Ord,
-    Eq,
-    Hash,
-    PartialEq,
-    Serialize,
-    strum::Display,
-    strum::EnumString,
+    Clone, Copy, PartialOrd, Ord, Eq, Hash, PartialEq, Serialize, strum::Display, strum::EnumString,
 )]
 pub enum PullRequestEventType {
     Opened,
