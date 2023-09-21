@@ -12,8 +12,8 @@ pub type PullRequestTimestamp = DateTime<Utc>;
     Hash,
     PartialEq,
     Serialize,
-    sea_orm::strum::Display,
-    sea_orm::strum::EnumString,
+    strum::Display,
+    strum::EnumString,
 )]
 pub enum PullRequestEventType {
     Opened,
