@@ -33,10 +33,7 @@ pub fn aggregate_events(
 fn get_update_details(events: &[PullRequestEvent]) -> Vec<String> {
     let mut grouped_events: HashMap<PullRequestEventType, Vec<&PullRequestEvent>> = HashMap::new();
     events.iter().for_each(|evt| {
-        grouped_events
-            .entry(evt.event_type)
-            .or_insert_with(Vec::new)
-            .push(evt);
+        grouped_events.entry(evt.event_type).or_default().push(evt);
     });
 
     // sort by event type to achieve a stable order of details
