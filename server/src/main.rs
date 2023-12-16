@@ -92,17 +92,13 @@ async fn start_with_config(
         }
     });
 
-    match get_router(cache, pr_event_service, reload_sender) {
-        Ok(router) => {
-            let addr = SocketAddr::from(([0, 0, 0, 0], port));
-            if let Err(err) = axum_server::bind(addr)
-                .serve(router.into_make_service())
-                .await
-            {
-                error!("Could not start server: {}", err);
-            }
-        }
-        Err(err) => error!("Could not configure server routes: {:#}", err),
-    }
+    let router = get_router(cache, pr_event_service, reload_sender)
+        .context("Could not configure server routes")?;
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    let listener = tokio::net::TcpListener::bind(addr).await?;
+    axum::serve(listener, router.into_make_service())
+        .await
+        .context("Could not start web server")?;
+
     Ok(())
 }
