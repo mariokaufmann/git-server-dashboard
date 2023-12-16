@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Context};
-use axum::http::Method;
+use reqwest::Method;
 
 use crate::adapter::bitbucket::repositories::request::load_repositories_data;
 use crate::service::repositories::model::{RepositoriesData, Repository};

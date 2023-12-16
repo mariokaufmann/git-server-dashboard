@@ -1,5 +1,4 @@
 use anyhow::{anyhow, Context};
-use axum::http;
 use chrono::Utc;
 use reqwest::Method;
 
@@ -35,7 +34,7 @@ impl GitlabClient {
             .client
             .request(Method::GET, full_url)
             .header(
-                http::header::AUTHORIZATION,
+                reqwest::header::AUTHORIZATION,
                 format!("Bearer {}", self.token),
             )
             .send()
