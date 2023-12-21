@@ -36,7 +36,7 @@ interface BranchInfo {
 
 function generateBranchesForRepository(
   project: string,
-  repository: string
+  repository: string,
 ): BranchInfo[] {
   const generator = getGenerator(project + repository);
   return [
@@ -65,7 +65,7 @@ function generateBranchesForRepository(
 
 function getInternal<T>(
   path: string,
-  handler: (params: ParamsDictionary) => T
+  handler: (params: ParamsDictionary) => T,
 ) {
   const updatedPath = `/rest${path.replace(/\{(.+?)}/g, ":$1")}`;
   bitbucketRouter.get(updatedPath, (request, response) => {
@@ -78,10 +78,10 @@ function getInternal<T>(
 function getPaginated<P extends keyof paths, S extends keyof BitbucketSchemas>(
   path: P,
   schema: S,
-  handler: (params: ParamsDictionary) => Partial<BitbucketSchemas[S]>[]
+  handler: (params: ParamsDictionary) => Partial<BitbucketSchemas[S]>[],
 ) {
   const wrappedHandler: (
-    params: ParamsDictionary
+    params: ParamsDictionary,
   ) => PaginatedResponse<Partial<BitbucketSchemas[S]>> = (params) => {
     const values = handler(params);
     return {
@@ -94,7 +94,7 @@ function getPaginated<P extends keyof paths, S extends keyof BitbucketSchemas>(
 function get<P extends keyof paths, S extends keyof BitbucketSchemas>(
   path: P,
   schema: S,
-  handler: (params: ParamsDictionary) => Partial<BitbucketSchemas[S]>
+  handler: (params: ParamsDictionary) => Partial<BitbucketSchemas[S]>,
 ) {
   getInternal(path, handler);
 }
@@ -117,7 +117,7 @@ get(
       name: `${projectKey}/${repositorySlug}`,
       links: linkResponse as unknown as Record<string, never>,
     };
-  }
+  },
 );
 
 getPaginated(
@@ -132,7 +132,7 @@ getPaginated(
       displayId: branch.displayId,
       latestCommit: branch.latestCommit,
     }));
-  }
+  },
 );
 
 getPaginated(
@@ -148,7 +148,7 @@ getPaginated(
         url: "https://bitbucket.com",
       },
     ];
-  }
+  },
 );
 
 getPaginated(
@@ -201,7 +201,7 @@ getPaginated(
         },
       },
     ];
-  }
+  },
 );
 
 get("/api/latest/users/{userSlug}", "RestApplicationUser", () => {

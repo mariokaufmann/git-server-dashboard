@@ -21,7 +21,7 @@ app.use(
       displayRequestDuration: true,
       url: "/swagger/definition",
     },
-  })
+  }),
 );
 
 app.use(express.json());
