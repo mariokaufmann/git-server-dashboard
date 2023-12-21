@@ -54,7 +54,7 @@ const mapToTitle = (status: PipelineStatus): string => {
 };
 
 const PipelineStatusIcon: Component<{ pipelineStatus: PipelineStatus }> = (
-  props
+  props,
 ) => {
   return (
     <i

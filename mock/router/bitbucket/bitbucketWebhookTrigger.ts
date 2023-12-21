@@ -103,5 +103,5 @@ bitbucketWebhookTrigger.post(
     }).then();
 
     response.send();
-  }
+  },
 );

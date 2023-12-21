@@ -10,7 +10,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     return {
       ...data,
       repositories: data.repositories.sort(
-        (rep1, rep2) => estimateLineCount(rep2) - estimateLineCount(rep1)
+        (rep1, rep2) => estimateLineCount(rep2) - estimateLineCount(rep1),
       ),
     };
   } else {

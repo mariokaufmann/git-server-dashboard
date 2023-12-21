@@ -21,7 +21,7 @@ export function markAllUpdatesAsLastSeenNow(updates: PullRequestUpdate[]) {
   const currentIds = updates.map((update) => update.pr_id);
   const currentLastSeen = prLastSeen();
   const notAffectedPrs = currentLastSeen.filter(
-    (lastSeen) => !currentIds.includes(lastSeen.prId)
+    (lastSeen) => !currentIds.includes(lastSeen.prId),
   );
   const markedUpdates: PullRequestUpdateLastSeen[] = [
     ...notAffectedPrs,

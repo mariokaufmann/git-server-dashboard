@@ -2,7 +2,7 @@ import { GetPullRequestUpdatesPayload, PullRequestUpdate } from '../types';
 import { PullRequestUpdateLastSeen } from '../prupdates/last-seen/storage';
 
 export async function getPRUpdates(
-  last_seen: PullRequestUpdateLastSeen[]
+  last_seen: PullRequestUpdateLastSeen[],
 ): Promise<PullRequestUpdate[]> {
   const payload: GetPullRequestUpdatesPayload = {
     pull_requests_last_seen: last_seen.map((item) => ({

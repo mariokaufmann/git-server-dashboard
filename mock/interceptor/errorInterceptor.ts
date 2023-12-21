@@ -8,7 +8,7 @@ export const errorInterceptor = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const error: Error = {
     message: err.message,

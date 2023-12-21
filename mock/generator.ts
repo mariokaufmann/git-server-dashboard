@@ -33,7 +33,7 @@ export function getGenerator(seed: string): DataGenerator {
   fakerInstance.seed(hash(seed));
 
   const pickRandomArrayElement: DataGenerator["pickRandomArrayElement"] = (
-    values
+    values,
   ) => values[randomIntInRange(0, values.length - 1)];
 
   const generateDateInPast = () => {

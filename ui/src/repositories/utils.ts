@@ -6,7 +6,7 @@ export function estimateLineCount(repository: RepositoryBranchData) {
     repository.pull_request_target_branches.length +
     repository.pull_request_target_branches.reduce(
       (previous, current) => previous + 2 * current.pull_requests.length,
-      0
+      0,
     )
   );
 }

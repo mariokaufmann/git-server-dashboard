@@ -4,7 +4,7 @@ const path = require('path');
 const args = process.argv;
 if (args.length !== 4) {
   throw new Error(
-    'Pass the folder and component name as arguments (in kebab-case)'
+    'Pass the folder and component name as arguments (in kebab-case)',
   );
 }
 
