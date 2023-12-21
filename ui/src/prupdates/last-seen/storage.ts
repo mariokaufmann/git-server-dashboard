@@ -35,7 +35,7 @@ export function loadStoredLastSeen(): PullRequestUpdateLastSeen[] {
 }
 
 export function storePullRequestUpdatesLastSeen(
-  lastSeen: PullRequestUpdateLastSeen[]
+  lastSeen: PullRequestUpdateLastSeen[],
 ) {
   const storedLastSeen: LastSeenStorageItem = {
     version: CurrentVersion,
@@ -46,10 +46,10 @@ export function storePullRequestUpdatesLastSeen(
 
 // we clean up old entries in the last seen list after 1 month
 function cleanupLastSeen(
-  lastSeen: PullRequestUpdateLastSeen[]
+  lastSeen: PullRequestUpdateLastSeen[],
 ): PullRequestUpdateLastSeen[] {
   const filteredLastSeen = lastSeen.filter((pullRequest) =>
-    lastSeenWithinThreshold(pullRequest.lastSeenTimestamp)
+    lastSeenWithinThreshold(pullRequest.lastSeenTimestamp),
   );
   storePullRequestUpdatesLastSeen(filteredLastSeen);
   return filteredLastSeen;

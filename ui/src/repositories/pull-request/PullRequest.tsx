@@ -5,7 +5,7 @@ import { PullRequest } from '../../types';
 import dayjs from 'dayjs';
 
 const PullRequestComponent: Component<{ pullRequest: PullRequest }> = (
-  props
+  props,
 ) => {
   return (
     <div>

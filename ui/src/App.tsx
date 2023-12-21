@@ -39,7 +39,7 @@ const App: Component = () => {
     createResource(getDashboardData);
   const [prUpdates, prUpdatesResourceActions] = createResource(
     prLastSeen,
-    getPRUpdates
+    getPRUpdates,
   );
 
   let timeout: number | undefined = undefined;
@@ -51,7 +51,7 @@ const App: Component = () => {
   timeout = setTimeout(reloadData, RELOAD_INTERVAL_MS);
 
   onMount(() =>
-    document.addEventListener('visibilitychange', onVisibilityChange)
+    document.addEventListener('visibilitychange', onVisibilityChange),
   );
   onCleanup(() => {
     clearTimeout(timeout);
