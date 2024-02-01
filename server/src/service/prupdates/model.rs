@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde_derive::Serialize;
+use strum::EnumString;
 
 pub type PullRequestTimestamp = DateTime<Utc>;
 
@@ -27,7 +28,7 @@ pub struct PullRequestEvent {
     pub pr_link: String,
 }
 
-#[derive(Serialize, sea_orm::strum::Display, sea_orm::strum::EnumString)]
+#[derive(Serialize, strum::Display, EnumString)]
 pub enum PullRequestUpdateType {
     Aggregated,
     Opened,
