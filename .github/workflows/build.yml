@@ -94,14 +94,14 @@ jobs:
         run: chmod +x ./package/docker.sh && ./package/docker.sh
       - name: Build and push Docker image (untagged)
         if: ${{ matrix.label == 'ubuntu-latest' && github.ref == 'refs/heads/main' && steps.version.outputs.is_valid == 'false' }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: docker
           push: true
           tags: mariokaufmann/git-server-dashboard:latest
       - name: Build and push Docker image (tagged)
         if: ${{ matrix.label == 'ubuntu-latest' && steps.version.outputs.is_valid == 'true' }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: docker
           push: true
