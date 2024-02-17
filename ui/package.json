@@ -2,6 +2,7 @@
   "name": "vite-template-solid",
   "version": "0.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -16,7 +17,7 @@
     "cpy-cli": "4.2.0",
     "prettier": "3.2.4",
     "typescript": "5.3.3",
-    "vite": "4.5.2",
+    "vite": "5.1.3",
     "vite-plugin-solid": "2.9.1"
   },
   "dependencies": {
