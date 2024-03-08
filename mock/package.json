@@ -12,20 +12,20 @@
     "postinstall": "npm run generate-types"
   },
   "dependencies": {
-    "@faker-js/faker": "8.4.0",
+    "@faker-js/faker": "8.4.1",
     "dayjs": "1.11.10",
-    "express": "4.18.2",
+    "express": "4.18.3",
     "seedrandom": "3.0.5",
     "swagger-ui-express": "5.0.0"
   },
   "devDependencies": {
     "@types/express": "4.17.21",
-    "@types/node": "20.11.14",
+    "@types/node": "20.11.24",
     "@types/seedrandom": "3.0.8",
     "@types/swagger-ui-express": "4.1.6",
-    "nodemon": "3.0.3",
+    "nodemon": "3.1.0",
     "openapi-typescript": "6.7.4",
-    "prettier": "3.2.4",
+    "prettier": "3.2.5",
     "simple-git": "3.22.0",
     "ts-node": "10.9.2"
   }
