@@ -1,3 +1,4 @@
+use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, Context};
@@ -45,9 +46,9 @@ pub async fn load_repositories_data(
 
         for branch in &branches {
             let commit_id = branch.latest_commit.clone();
-            if build_status_map.get(&commit_id).is_none() {
-                let build_status = get_build_status(client, &commit_id).await?;
-                build_status_map.insert(commit_id, build_status);
+            if let Entry::Vacant(e) = build_status_map.entry(commit_id) {
+                let build_status = get_build_status(client, e.key()).await?;
+                e.insert(build_status);
             }
         }
 
@@ -55,15 +56,17 @@ pub async fn load_repositories_data(
 
         for pull_request in &pull_requests {
             let commit_id = pull_request.from_ref.latest_commit.clone();
-            if build_status_map.get(&commit_id).is_none() {
-                let build_status = get_build_status(client, &commit_id).await?;
-                build_status_map.insert(commit_id, build_status);
+
+            if let Entry::Vacant(e) = build_status_map.entry(commit_id) {
+                let build_status = get_build_status(client, e.key()).await?;
+                e.insert(build_status);
             }
 
             let user_slug = pull_request.author.user.slug.clone();
-            if user_map.get(&user_slug).is_none() {
-                let user = get_user(client, &user_slug).await?;
-                user_map.insert(user_slug, user);
+
+            if let Entry::Vacant(e) = user_map.entry(user_slug) {
+                let user = get_user(client, e.key()).await?;
+                e.insert(user);
             }
         }
 
