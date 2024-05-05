@@ -1,5 +1,5 @@
-use std::collections::{HashMap, HashSet};
 use std::collections::hash_map::Entry;
+use std::collections::{HashMap, HashSet};
 
 use anyhow::{anyhow, Context};
 use chrono::{TimeZone, Utc};
@@ -61,7 +61,6 @@ pub async fn load_repositories_data(
                 let build_status = get_build_status(client, e.key()).await?;
                 e.insert(build_status);
             }
-
 
             let user_slug = pull_request.author.user.slug.clone();
 
