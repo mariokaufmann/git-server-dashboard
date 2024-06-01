@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:noble
 WORKDIR /app
 COPY git-server-dashboard /app/
 COPY static /app/static
