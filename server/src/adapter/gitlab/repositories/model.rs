@@ -52,8 +52,6 @@ pub struct SingleMergeRequestResponse {
     pub author: GitlabUserResponse,
     pub updated_at: String,
     pub user_notes_count: u32,
-    pub has_conflicts: bool,
-    pub blocking_discussions_resolved: bool,
     pub pipeline: Option<PipelineResponse>,
     pub web_url: String,
 }
