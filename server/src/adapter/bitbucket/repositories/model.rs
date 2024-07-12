@@ -27,7 +27,6 @@ pub struct BuildStatusResponse {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PullRequestResponse {
-    pub id: u32,
     pub from_ref: GitRefResponse,
     pub to_ref: GitRefResponse,
     pub author: PullRequestUserResponse,
@@ -48,7 +47,6 @@ pub struct PullRequestPropertiesResponse {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GitRefResponse {
-    pub id: String,
     pub display_id: String,
     pub latest_commit: String,
 }
